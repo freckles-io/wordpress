@@ -1,0 +1,8 @@
+- freckle:
+    owner: seafile
+    group: seafile
+
+- wordpress:
+    wordpress_db_user: wpuser
+    wordpress_db_user_pass: userpassword
+
