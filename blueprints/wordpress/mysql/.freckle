@@ -2,10 +2,11 @@
    owner: mysql
    group: mysql
    staging_method: stow
-   stow_root: /
+   stow_root: /var/lib
+
 - mysql:
-   mysql_root_password: geheim
-   mysql_root_password_update: no
+   # mysql_root_password: secret
+   # mysql_root_password_update: no
    mysql_databases:
      - name: wp_database
    mysql_users:
@@ -13,3 +14,6 @@
        host: localhost
        password: userpassword
        priv: "wp_database.*:ALL"
+
+
+

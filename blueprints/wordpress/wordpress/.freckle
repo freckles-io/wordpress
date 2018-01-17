@@ -1,0 +1,7 @@
+- freckle:
+   owner: www-data
+   group: www-data
+   staging_method: stow
+   stow_root: /var/www/wordpress
+
+- wordpress
