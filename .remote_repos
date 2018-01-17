@@ -1,3 +1,4 @@
 adapters/mysql=https://github.com/freckles-io/adapter-mysql.git
 roles/geerlingguy.nginx=https://github.com/makkus/ansible-role-nginx.git
 roles/geerlingguy.php=https://github.com/makkus/ansible-role-php.git
+roles/thefinn93.letsencrypt=https://github.com/thefinn93/ansible-letsencrypt.git
