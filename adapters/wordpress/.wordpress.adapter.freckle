@@ -10,6 +10,7 @@ role-dependencies:
 available_vars:
   test: test
 
+priority: 1000
 
 # args:
 #   test_arg:
