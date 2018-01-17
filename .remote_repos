@@ -1,1 +1,2 @@
 adapters/mysql=https://github.com/freckles-io/adapter-mysql.git
+roles/geerlingguy.nginx=https://github.com/makkus/ansible-role-nginx.git
