@@ -1,0 +1,18 @@
+---
+role-dependencies:
+  - geerlingguy.mysql
+doc:
+  help: "adapter to install a mysql database using this role: https://github.com/geerlingguy/ansible-role-mysql"
+  short_help: install mysql db
+# args:
+#   test_arg:
+#     arg_name: test-arg
+#     help: example help text for arg
+#     type: str  # (optional)
+#     multiple: false  # (optional)
+#     required: false  # (optional)
+#     default: default-string  # (optional)
+#     metavar: TEST_ARG  # (optional)
+#     is_flag: false  # (optional)
+#     is_var: true  # (optional)
+#     is_argument: false  # (optional)

@@ -1,0 +1,12 @@
+- name: "[setting vars]"
+  set_fact:
+    mysql_root_password: "{{ freckle_folder_vars.mysql_root_password | default(omit) }}"
+    mysql_root_password_update: "{{ freckle_folder_vars.mysql_root_password_update | default(omit) }}"
+    mysql_databases: "{{ freckle_vars.mysql_databases | default(omit) }}"
+    mysql_users: "{{ freckle_vars.mysql_users | default(omit) }}"
+    mysql_datadir: /var/lib/mysql
+
+- name: "[install mysql]"
+  include_role:
+    name: geerlingguy.mysql
+  become: yes
