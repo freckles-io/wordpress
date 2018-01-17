@@ -1,34 +1,100 @@
-- name: debug freckle path
-  debug: var=freckle_path
+- name: "installing adapter requirements"
+  install:
+    packages: "{{ item }}"
+  with_items:
+    - curl
 
-- name: debug freckle_folder_vars
-  debug: var=freckle_folder_vars
+- name: "[starting php role]"
+  include_role:
+    name: geerlingguy.php
+  vars:
+    php_enable_php_fpm: false
+    # php_fpm_pool_user: "{{ freckles_global_vars.owner }}"
+    php_packages_extra:
+      - php-zip
+      - php-curl
+      - php-gd
+      - php-mbstring
+      - php-mcrypt
+      - php-xml
+      - php-xmlrpc
+      - libapache2-mod-php
+      - php-mysql
+  become: true
 
-- name: debug freckle vars (raw)
-  debug: var=freckle_vars_raw
-
-- name: debug freckle vars
-  debug: var=freckle_vars
+- name: "[starting apache role]"
+  include_role:
+    name: geerlingguy.apache
+  vars:
+    apache_listen_ip: "*"
+    apache_listen_port: 8180
+    apache_create_vhosts: true
+    apache_remove_default_vhost: true
+    apache_mods_enabled:
+      - rewrite.load
+      - php7.0.load
+    apache_vhosts:
+      - servername: "www.local.dev"
+        serveralias: "local.dev"
+        documentroot: "{{ freckle_path }}"
+        allow_override: All
+  become: true
 
 - name: "[setting defaults]"
   set_fact:
-    wordpress_user: "{{ freckle_folder_vars.owner }}"
-    wordpress_group: "{{ freckle_folder_vars.group | default(omit) }}"
+    wordpress_webserver_user: "{{ freckle_folder_vars.owner }}"
+    wordpress_webserver_group: "{{ freckle_folder_vars.group | default(omit) }}"
 
-- name: "[checking wordpress]"
+- name: "[check if wp config is empty]"
   stat:
-    path: "/var/www/wordpress"
-  register: wordpress_dir
+    path: "{{ freckle_path }}/wp-config.php"
+  register: wp_config_file
+
+- name: "creating wordpress config"
+  block:
+
+    - command: curl http://api.wordpress.org/secret-key/1.1/salt/
+      register: wp_salt
+
+    - set_fact:
+        wp_db_name: wp_database
+        wp_db_user: wpuser
+        wp_db_password: userpassword
+        wp_table_prefix: wp_
+        wp_lang: en_US
+        wp_debug: false
+
+    - set_fact:
+        wordpress_config: |
+          <?php
+          define("DB_NAME", "{{ wp_db_name }}");
+          define("DB_USER", "{{ wp_db_user }}");
+          define("DB_PASSWORD", "{{ wp_db_password }}");
+          define("DB_HOST", "localhost");
+          define("DB_CHARSET", "utf8");
+          define("DB_COLLATE", "");
+          {{ wp_salt.stdout }}
+          $table_prefix  = "{{ wp_table_prefix }}";
+          define("WPLANG", "{{ wp_lang }}");
+          define("WP_DEBUG", {{ wp_debug }});
+          define("CONCATENATE_SCRIPTS", false);
+          if (!defined("ABSPATH"))
+           define("ABSPATH", dirname(__FILE__) . "/");
+          require_once(ABSPATH . "wp-settings.php");
+
+    - copy: content="{{ wordpress_config }}" dest="{{ freckle_path }}/wp-config.php"
+      become: true
+
+  when: wp_config_file.stat.size == 0
 
 - name: "[extract wordpress]"
   unarchive:
     src: https://wordpress.org/latest.tar.gz
-    creates: "/var/www/wordpress"
-    dest: "/var/www"
-    owner: "{{ wordpress_user }}"
-    group: "{{ wordpress_group }}"
+    creates: "/var/www/wordpress/wp-admin"
+    dest: "/var/www/"
+    owner: "{{ wordpress_webserver_user }}"
+    group: "{{ wordpress_webserver_group }}"
     remote_src: yes
-  when: not wordpress_dir.stat.exists
   become: true
 
 - name: "changing wordpress directory permissions"
@@ -38,3 +104,4 @@
 - name: "changing wordpress file permissions"
   command: "find /var/www/wordpress -type f -exec chmod 644 {} \\;"
   become: true
+
