@@ -1,12 +1,14 @@
 doc:
   short_help: installs wordpress
   help: installs wordpress, including mysql/mariadb & a webserver (nginx)
+
+role-dependencies:
   - geerlingguy.nginx
   - geerlingguy.php
   - thefinn93.letsencrypt
 
-#role-dependencies:
-#  - <role_author>.<role_name>
+available_vars:
+  test: test
 
 
 # args:
