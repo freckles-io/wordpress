@@ -1,0 +1,23 @@
+doc:
+  short_help: installs wordpress
+  help: installs wordpress, including mysql/mariadb & a webserver (nginx)
+  - geerlingguy.nginx
+  - geerlingguy.php
+  - thefinn93.letsencrypt
+
+#role-dependencies:
+#  - <role_author>.<role_name>
+
+
+# args:
+#   test_arg:
+#     arg_name: test-arg
+#     help: example help text for arg
+#     type: str  # (optional)
+#     multiple: false  # (optional)
+#     required: false  # (optional)
+#     default: default-string  # (optional)
+#     metavar: TEST_ARG  # (optional)
+#     is_flag: false  # (optional)
+#     is_var: true  # (optional)
+#     is_argument: false  # (optional)
