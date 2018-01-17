@@ -3,7 +3,7 @@ doc:
   help: installs wordpress, including mysql/mariadb & a webserver (nginx)
 
 role-dependencies:
-  - geerlingguy.nginx
+  - geerlingguy.apache
   - geerlingguy.php
   - thefinn93.letsencrypt
 
