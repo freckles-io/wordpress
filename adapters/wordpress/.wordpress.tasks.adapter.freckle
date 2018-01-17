@@ -10,3 +10,31 @@
 - name: debug freckle vars
   debug: var=freckle_vars
 
+- name: "[setting defaults]"
+  set_fact:
+    wordpress_user: "{{ freckle_folder_vars.owner }}"
+    wordpress_group: "{{ freckle_folder_vars.group | default(omit) }}"
+
+- name: "[checking wordpress]"
+  stat:
+    path: "/var/www/wordpress"
+  register: wordpress_dir
+
+- name: "[extract wordpress]"
+  unarchive:
+    src: https://wordpress.org/latest.tar.gz
+    creates: "/var/www/wordpress"
+    dest: "/var/www"
+    owner: "{{ wordpress_user }}"
+    group: "{{ wordpress_group }}"
+    remote_src: yes
+  when: not wordpress_dir.stat.exists
+  become: true
+
+- name: "changing wordpress directory permissions"
+  command: "find /var/www/wordpress -type d -exec chmod 755 {} \\;"
+  become: true
+
+- name: "changing wordpress file permissions"
+  command: "find /var/www/wordpress -type f -exec chmod 644 {} \\;"
+  become: true
