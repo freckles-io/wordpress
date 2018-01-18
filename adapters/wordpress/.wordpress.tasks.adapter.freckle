@@ -38,10 +38,14 @@
     apache_vhosts_ssl:
       documentroot: "/var/www/wordpress",
       allow_override: All
-      certificate_file: "/etc/letsencrypt/live/{{ seafile_domain }}/cert.pem"
-      certificate_key_file: "/etc/letsencrypt/live/{{ seafile_domain }}/privkey.pem"
+      certificate_file: "/etc/letsencrypt/live/{{ wordpress_domain }}/cert.pem"
+      certificate_key_file: "/etc/letsencrypt/live/{{ wordpress_domain }}/privkey.pem"
       certificate_chain_file: "/etc/letsencrypt/live/{{ wordpress_domain }}/fullchain.pem"
     apache_listen_port_ssl: 443
+    apache_mods_enabled:
+      - rewrite.load
+      - php7.0.load
+      - ssl.load
   when: request_https_cert
 
 - name: "[setting variables for non-https deployment]"
@@ -50,6 +54,9 @@
       - servername: "{{ wordpress_domain }}"
         documentroot: "/var/www/wordpress"
         allow_override: All
+    apache_mods_enabled:
+      - rewrite.load
+      - php7.0.load
   when: not request_https_cert
 
 - name: "managing https certificate for {{ seafile_domain }}"
@@ -60,7 +67,6 @@
     letsencrypt_renewal_command_args: '--renew-hook "systemctl restart apache2"'
   when: request_https_cert
 
-
 - name: "[starting apache role]"
   include_role:
     name: geerlingguy.apache
@@ -69,9 +75,6 @@
     apache_listen_port: "{{ wordpress_port }}"
     apache_create_vhosts: true
     apache_remove_default_vhost: true
-    apache_mods_enabled:
-      - rewrite.load
-      - php7.0.load
   become: true
 
 - name: "[check if wp config is empty]"
