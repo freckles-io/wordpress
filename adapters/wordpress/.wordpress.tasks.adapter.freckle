@@ -36,7 +36,7 @@
     apache_vhosts:
       - servername: "www.local.dev"
         serveralias: "local.dev"
-        documentroot: "{{ freckle_path }}"
+        documentroot: "/var/www/wordpress"
         allow_override: All
   become: true
 
@@ -95,6 +95,7 @@
     owner: "{{ wordpress_webserver_user }}"
     group: "{{ wordpress_webserver_group }}"
     remote_src: yes
+    keep_newer: yes
   become: true
 
 - name: "changing wordpress directory permissions"
