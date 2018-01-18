@@ -4,24 +4,6 @@
   with_items:
     - curl
 
-- name: "[starting php role]"
-  include_role:
-    name: geerlingguy.php
-  vars:
-    php_enable_php_fpm: false
-    # php_fpm_pool_user: "{{ freckles_global_vars.owner }}"
-    php_packages_extra:
-      - php-zip
-      - php-curl
-      - php-gd
-      - php-mbstring
-      - php-mcrypt
-      - php-xml
-      - php-xmlrpc
-      - libapache2-mod-php
-      - php-mysql
-  become: true
-
 - name: "[setting defaults]"
   set_fact:
     wordpress_domain: "{{ freckle_folder_vars.wordpress_domain | default('localhost') }}"
@@ -72,6 +54,24 @@
     letsencrypt_webroot_path: /var/www/wordpress
     letsencrypt_renewal_command_args: '--renew-hook "systemctl restart apache2"'
   when: request_https_cert
+
+- name: "[starting php role]"
+  include_role:
+    name: geerlingguy.php
+  vars:
+    php_enable_php_fpm: false
+    # php_fpm_pool_user: "{{ freckles_global_vars.owner }}"
+    php_packages_extra:
+      - php-zip
+      - php-curl
+      - php-gd
+      - php-mbstring
+      - php-mcrypt
+      - php-xml
+      - php-xmlrpc
+      - libapache2-mod-php
+      - php-mysql
+  become: true
 
 - name: "[starting apache role]"
   include_role:
