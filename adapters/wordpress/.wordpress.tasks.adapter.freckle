@@ -22,28 +22,57 @@
       - php-mysql
   become: true
 
+- name: "[setting defaults]"
+  set_fact:
+    wordpress_domain: "{{ freckle_folder_vars.wordpress_domain | default('localhost') }}"
+    wordpress_port: "{{ freckle_folder_vars.wordpress_port | default(80) }}"
+    wordpress_webserver_user: "{{ freckle_folder_vars.owner }}"
+    wordpress_webserver_group: "{{ freckle_folder_vars.group | default(omit) }}"
+    request_https_cert: "{{ freckle_folder_vars.request_https_cert | default(false) }}"
+
+- name: "[setting https related stuff]"
+  set_fact:
+    letsencrypt_email: "{{ freckle_folder_vars.letsencrypt_email | mandatory }}"
+    letsencrypt_cert_domains:
+      - "{{ wordpress_domain }}"
+    apache_vhosts_ssl:
+      documentroot: "/var/www/wordpress",
+      allow_override: All
+      certificate_file: "/etc/letsencrypt/live/{{ seafile_domain }}/cert.pem"
+      certificate_key_file: "/etc/letsencrypt/live/{{ seafile_domain }}/privkey.pem"
+      certificate_chain_file: "/etc/letsencrypt/live/{{ wordpress_domain }}/fullchain.pem"
+    apache_listen_port_ssl: 443
+  when: request_https_cert
+
+- name: "[setting variables for non-https deployment]"
+  set_fact:
+    apache_vhosts:
+      - servername: "{{ wordpress_domain }}"
+        documentroot: "/var/www/wordpress"
+        allow_override: All
+  when: not request_https_cert
+
+- name: "managing https certificate for {{ seafile_domain }}"
+  include_role:
+    name: thefinn93.letsencrypt
+  vars:
+    letsencrypt_webroot_path: /var/www/wordpress
+    letsencrypt_renewal_command_args: '--renew-hook "systemctl restart apache2"'
+  when: request_https_cert
+
+
 - name: "[starting apache role]"
   include_role:
     name: geerlingguy.apache
   vars:
     apache_listen_ip: "*"
-    apache_listen_port: 8180
+    apache_listen_port: "{{ wordpress_port }}"
     apache_create_vhosts: true
     apache_remove_default_vhost: true
     apache_mods_enabled:
       - rewrite.load
       - php7.0.load
-    apache_vhosts:
-      - servername: "www.local.dev"
-        serveralias: "local.dev"
-        documentroot: "/var/www/wordpress"
-        allow_override: All
   become: true
-
-- name: "[setting defaults]"
-  set_fact:
-    wordpress_webserver_user: "{{ freckle_folder_vars.owner }}"
-    wordpress_webserver_group: "{{ freckle_folder_vars.group | default(omit) }}"
 
 - name: "[check if wp config is empty]"
   stat:
@@ -57,12 +86,13 @@
       register: wp_salt
 
     - set_fact:
-        wp_db_name: wp_database
-        wp_db_user: wpuser
-        wp_db_password: userpassword
-        wp_table_prefix: wp_
-        wp_lang: en_US
-        wp_debug: false
+        wp_db_name: "{{ freckle_folder_vars.wordpress_db_name | default('wp_database') }}"
+        wp_db_host: "{{ freckle_folder_vars.wordpress_db_host | default('localhost') }}"
+        wp_db_user: "{{ freckle_folder_vars.wordpress_db_user | default('wp_user') }}"
+        wp_db_password: "{{ freckle_folder_vars.wordpress_db_user_password | default('wp_user_password') }}"
+        wp_table_prefix: "{{ freckle_folder_vars.wordpress_db_table_prefix | default('wp_') }}"
+        wp_lang: "{{ freckle_folder_vars.wordpress_language | default('en_US') }}"
+        wp_debug: "{{ freckle_folder_vars.wordpress_debug | default(false) }}"
 
     - set_fact:
         wordpress_config: |
@@ -70,7 +100,7 @@
           define("DB_NAME", "{{ wp_db_name }}");
           define("DB_USER", "{{ wp_db_user }}");
           define("DB_PASSWORD", "{{ wp_db_password }}");
-          define("DB_HOST", "localhost");
+          define("DB_HOST", "{{ wp_db_host }}");
           define("DB_CHARSET", "utf8");
           define("DB_COLLATE", "");
           {{ wp_salt.stdout }}
