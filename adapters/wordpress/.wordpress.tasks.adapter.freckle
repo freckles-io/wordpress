@@ -65,7 +65,7 @@
       - php7.0.load
   when: not request_https_cert
 
-- name: "managing https certificate for {{ seafile_domain }}"
+- name: "managing https certificate for {{ wordpress_domain }}"
   include_role:
     name: thefinn93.letsencrypt
   vars:
