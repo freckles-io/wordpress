@@ -35,6 +35,11 @@
     letsencrypt_email: "{{ freckle_folder_vars.letsencrypt_email | mandatory }}"
     letsencrypt_cert_domains:
       - "{{ wordpress_domain }}"
+    apache_vhosts:
+      - servername: "{{ wordpress_domain }}"
+        allow_override: All
+        extra_parameters: |
+          Redirect / https://{{ wordpress_domain }}/
     apache_vhosts_ssl:
       - servername: "{{ wordpress_domain }}"
         documentroot: "/var/www/wordpress"
