@@ -36,11 +36,12 @@
     letsencrypt_cert_domains:
       - "{{ wordpress_domain }}"
     apache_vhosts_ssl:
-      documentroot: "/var/www/wordpress"
-      allow_override: All
-      certificate_file: "/etc/letsencrypt/live/{{ wordpress_domain }}/cert.pem"
-      certificate_key_file: "/etc/letsencrypt/live/{{ wordpress_domain }}/privkey.pem"
-      certificate_chain_file: "/etc/letsencrypt/live/{{ wordpress_domain }}/fullchain.pem"
+      - servername: "{{ wordpress_domain }}"
+        documentroot: "/var/www/wordpress"
+        allow_override: All
+        certificate_file: "/etc/letsencrypt/live/{{ wordpress_domain }}/cert.pem"
+        certificate_key_file: "/etc/letsencrypt/live/{{ wordpress_domain }}/privkey.pem"
+        certificate_chain_file: "/etc/letsencrypt/live/{{ wordpress_domain }}/fullchain.pem"
     apache_listen_port_ssl: 443
     apache_mods_enabled:
       - rewrite.load
@@ -54,7 +55,6 @@
       - servername: "{{ wordpress_domain }}"
         documentroot: "/var/www/wordpress"
         allow_override: All
-    apache_vhosts_ssl: []
     apache_mods_enabled:
       - rewrite.load
       - php7.0.load
