@@ -12,6 +12,8 @@ available_vars:
     help: "the domain where this wordpress instance is hosted, defaults to 'localhost'"
   wordpress_db_host:
     help: "the wordpress database host, defaults to 'localhost', takes string in the format <host>[:<port>]"
+  letsencrypt_email:
+    help: optional, if set then this adapter will request a https certificate and use https to serve wordpress
   wordpress_db_name:
     help: "the wordpress database name, defaults to 'wp_database'"
   wordpress_db_user:

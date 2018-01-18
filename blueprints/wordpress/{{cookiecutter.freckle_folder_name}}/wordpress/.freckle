@@ -5,8 +5,8 @@
    stow_root: /var/www/wordpress
 
 - wordpress:
-   # letsencrypt_email: <your_email>
-   wordpress_domain: 'localhost'
+   letsencrypt_email: {{ cookiecutter.lets_encrypt_email }}
+   wordpress_domain: {{ cookiecutter.wordpress_domain }}
    wordpress_port: 80
    wordpress_db_name: wp_database
    wordpress_db_host: localhost
@@ -15,4 +15,3 @@
    wordpress_db_table_prefix: wp_
    wordpress_language: en_US
    wordpress_debug: false
-   request_https_cert:

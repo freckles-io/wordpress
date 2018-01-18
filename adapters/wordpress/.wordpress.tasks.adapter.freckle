@@ -10,7 +10,16 @@
     wordpress_port: "{{ freckle_folder_vars.wordpress_port | default(80) }}"
     wordpress_webserver_user: "{{ freckle_folder_vars.owner }}"
     wordpress_webserver_group: "{{ freckle_folder_vars.group | default(omit) }}"
-    request_https_cert: "{{ freckle_folder_vars.request_https_cert | default(false) }}"
+
+- name: "[enabling letsencrypt]"
+  set_fact:
+    request_https_cert: true
+  when: "freckle_folder_vars.get('letsencrypt_email', False) and freckle_folder_vars.get('letsencrypt_email', False) not in ['false', 'False', 'no', 'No', 'none', 'None']"
+
+- name: "[disabling letsencrypt]"
+  set_fact:
+    request_https_cert: false
+  when: "not freckle_folder_vars.get('letsencrypt_email', False) or freckle_folder_vars.get('letsencrypt_email', False) in ['false', 'False', 'no', 'No', 'none', 'None']"
 
 - name: "[setting https related stuff]"
   set_fact:
