@@ -10,9 +10,9 @@
    mysql_databases:
      - name: wp_database
    mysql_users:
-     - name: wpuser
+     - name: wp_user
        host: localhost
-       password: userpassword
+       password: wp_user_password
        priv: "wp_database.*:ALL"
 
 
