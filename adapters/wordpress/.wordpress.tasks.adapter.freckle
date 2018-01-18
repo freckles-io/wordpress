@@ -36,7 +36,7 @@
     letsencrypt_cert_domains:
       - "{{ wordpress_domain }}"
     apache_vhosts_ssl:
-      documentroot: "/var/www/wordpress",
+      documentroot: "/var/www/wordpress"
       allow_override: All
       certificate_file: "/etc/letsencrypt/live/{{ wordpress_domain }}/cert.pem"
       certificate_key_file: "/etc/letsencrypt/live/{{ wordpress_domain }}/privkey.pem"
