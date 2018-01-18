@@ -8,11 +8,24 @@ role-dependencies:
   - thefinn93.letsencrypt
 
 available_vars:
-  test: test
+  wordpress_domain:
+    help: "the domain where this wordpress instance is hosted, defaults to 'localhost'"
+  wordpress_db_name:
+    help: "the wordpress database name, defaults to 'wp_database'"
+  wordpress_db_host:
+    help: "the wordpress database host, defaults to 'localhost', takes string in the format <host>[:<port>]"
+  wordpress_db_user:
+    help: "the wordpress database username, defaults to 'wp_user'"
+  wordpress_db_user_password:
+    help: "the wordpress database user password, defaults to 'wp_user_password'"
+  wordpress_db_table_prefix:
+    help: "the wordpress db table prefix, defaults to 'wp_'"
+  wordpress_language:
+    help: "the wordpress language, defaults to 'en_US'"
+  wordpress_debug:
+    help: "whether to enable wordpress debug, default: 'false'"
 
 priority: 1000
-
-
 
 # args:
 #   test_arg:
