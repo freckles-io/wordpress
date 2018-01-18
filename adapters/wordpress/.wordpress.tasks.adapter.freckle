@@ -47,6 +47,7 @@
       - php7.0.load
   when: not request_https_cert
 
+# TODO: maybe stop/start apache for letsencrypt request
 - name: "managing https certificate for {{ wordpress_domain }}"
   include_role:
     name: thefinn93.letsencrypt
