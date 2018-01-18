@@ -112,6 +112,7 @@
         wp_table_prefix: "{{ freckle_folder_vars.wordpress_db_table_prefix | default('wp_') }}"
         wp_lang: "{{ freckle_folder_vars.wordpress_language | default('en_US') }}"
         wp_debug: "{{ freckle_folder_vars.wordpress_debug | default(false) }}"
+      no_log: true
 
     - set_fact:
         wordpress_config: |
@@ -130,9 +131,11 @@
           if (!defined("ABSPATH"))
            define("ABSPATH", dirname(__FILE__) . "/");
           require_once(ABSPATH . "wp-settings.php");
+        no_log: true
 
     - copy: content="{{ wordpress_config }}" dest="{{ freckle_path }}/wp-config.php"
       become: true
+      no_log: true
 
   when: wp_config_file.stat.size == 0
 
