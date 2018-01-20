@@ -139,7 +139,7 @@
 
   when: wp_config_file.stat.size == 0
 
-- name: "[extract wordpress]"
+- name: "downloading and extracting wordpress"
   unarchive:
     src: https://wordpress.org/latest.tar.gz
     creates: "/var/www/wordpress/wp-admin"
