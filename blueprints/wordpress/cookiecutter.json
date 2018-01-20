@@ -1,5 +1,6 @@
 {
-  "freckle_folder_name": "wordpress",
-   "wordpress_domain": "localhost",
-   "lets_encrypt_email": "none"
+    "freckle_folder_name": "wordpress",
+    "wordpress_domain": "localhost",
+    "wordpress_port": 80,
+    "lets_encrypt_email": "none"
 }
