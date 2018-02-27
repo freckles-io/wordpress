@@ -1,0 +1,6 @@
+- freckle:
+    owner: freckles
+    group: freckles
+
+- grav:
+    wordpress_port: 8280
