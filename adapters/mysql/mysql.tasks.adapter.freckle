@@ -1,3 +1,12 @@
+- name: "[check if mysql dump exists]"
+  stat:
+    path: "{{ freckle_path }}/mysql_dump.sql"
+  register: mysql_dump_file
+
+- name: "[set mysql_restore var]"
+  set_fact:
+    mysql_restore: "{{ mysql_dump_file.stat.exists }}"
+
 - name: "[setting vars]"
   set_fact:
     mysql_root_password: "{{ freckle_folder_vars.mysql_root_password | default(omit) }}"
@@ -5,8 +14,17 @@
     mysql_databases: "{{ freckle_vars.mysql_databases | default(omit) }}"
     mysql_users: "{{ freckle_vars.mysql_users | default(omit) }}"
     mysql_datadir: /var/lib/mysql
+  when: not mysql_restore
 
 - name: "[install mysql]"
   include_role:
     name: geerlingguy.mysql
+  become: yes
+
+- name: "restoring mysql database(s) from file: '{{ freckle_path }}/mysql_dump.sql'"
+  mysql_db:
+    state: import
+    name: all
+    target: "{{ freckle_path }}/mysql_dump.sql"
+  when: mysql_restore
   become: yes
