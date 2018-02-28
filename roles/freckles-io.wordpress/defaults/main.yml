@@ -1,2 +1,21 @@
 ---
 # defaults file for freckles-io.wordpress
+
+wordpress_domain: localhost
+wordpress_port: 80
+wordpress_webserver_root: "/var/www"
+wordpress_wordpress_root: "{{ wordpress_webserver_root }}/wordpress"
+wordpress_config_file_path: "{{ wordpress_wordpress_root }}/wp-config.php"
+wordpress_webserver_user: www-data
+wordpress_webserver_group: www-data
+wordpress_request_https_cert: false
+wordpress_letsencrypt_email: none
+wordpress_letsencrypt_cert_domains: []
+
+wordpress_db_name: wp_database
+wordpress_db_host: localhost
+wordpress_db_user: wp_user
+wordpress_db_password: wp_user_password
+wordpress_table_prefix: wp_
+wp_lang: en_US
+wp_debug: false
