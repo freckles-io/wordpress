@@ -3,3 +3,4 @@ roles/geerlingguy.php=https://github.com/makkus/ansible-role-php.git
 roles/thefinn93.letsencrypt=https://github.com/thefinn93/ansible-letsencrypt.git
 roles/geerlingguy.mysql=https://github.com/makkus/ansible-role-mysql.git
 roles/geerlingguy.apache=https://github.com/makkus/ansible-role-apache.git
+roles/freckles-io.wordpress=https://github.com/freckles-io/freckles-io.wordpress.git
