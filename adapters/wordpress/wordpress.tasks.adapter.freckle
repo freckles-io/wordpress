@@ -17,7 +17,7 @@
     wp_table_prefix: "{{ freckle_folder_vars.wordpress_db_table_prefix | default('wp_') }}"
     wp_lang: "{{ freckle_folder_vars.wordpress_language | default('en_US') }}"
     wp_debug: "{{ freckle_folder_vars.wordpress_debug | default(false) }}"
-    wordpress_docker: "{{ freckle_folder_vars.wordpress_docker | default(false) }}"
+    wordpress_docker: "{{ freckle_global_vars.freckle_docker | default(false) }}"
   no_log: true
 
 - name: "[setting docker uid/gid]"
