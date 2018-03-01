@@ -4,3 +4,4 @@ roles/thefinn93.letsencrypt=https://github.com/thefinn93/ansible-letsencrypt.git
 roles/geerlingguy.mysql=https://github.com/makkus/ansible-role-mysql.git
 roles/geerlingguy.apache=https://github.com/makkus/ansible-role-apache.git
 roles/freckles-io.wordpress=https://github.com/freckles-io/freckles-io.wordpress.git
+roles/geerlingguy.supervisor=https://github.com/freckles-io-external/ansible-role-supervisor.git
