@@ -20,14 +20,14 @@
     mysql_group_id: "{{ freckle_vars.mysql_gid | default(omit) }}"
   when: not mysql_restore
 
-- name: "creating mysql group"
+- name: "creating mysql group with gid: '{{ mysql_group_id }}'"
   group:
     name: mysql
     gid: "{{ mysql_group_id }}"
     state: present
   when: "mysql_group_id is defined"
 
-- name: "creating mysql user"
+- name: "creating mysql user with uid: '{{ mysql_user_id }}'"
   group:
     name: mysql
     uid: "{{ mysql_user_id }}"
