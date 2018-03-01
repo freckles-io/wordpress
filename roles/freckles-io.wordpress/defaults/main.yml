@@ -22,3 +22,5 @@ wp_debug: false
 
 wordpress_docker: false
 wordpress_docker_user: wordpress
+
+wordpress_vagrant: false
