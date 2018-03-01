@@ -136,3 +136,7 @@
 - name: "changing wordpress file permissions"
   command: "find {{ wordpress_wordpress_root }} -type f -exec chmod 644 {} \\;"
   become: true
+
+- name: including docker-specific tasks
+  include_tasks: wordpress_docker.yml
+  when: wordpress_docker

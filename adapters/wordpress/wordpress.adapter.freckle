@@ -7,6 +7,7 @@ role-dependencies:
   - geerlingguy.php
   - thefinn93.letsencrypt
   - freckles-io.wordpress
+  - geerlingguy.supervisor
 
 available_vars:
   wordpress_domain:

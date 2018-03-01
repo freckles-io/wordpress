@@ -1,0 +1,80 @@
+---
+
+- name: "creating wordpress group for docker: {{ wordpress_docker_group }}"
+  group:
+    name: "{{ wordpress_docker_group }}"
+    gid: "{{ wordpress_docker_gid | default(omit) }}"
+    state: "present"
+  when: wordpress_docker_group is defined
+
+- name: "creating wordpress user for docker: {{ wordpress_docker_user }}"
+  user:
+    name: "{{ wordpress_docker_user }}"
+    uid: "{{ wordpress_docker_uid | default(omit) }}"
+    group: "{{ wordpress_docker_group | default(omit) }}"
+    shell: "/bin/bash"
+    state: "present"
+
+- name: copying wrapper run script for docker
+  copy:
+    src: "{{ role_path }}/files/docker_run.sh"
+    dest: /opt/docker_run.sh
+    owner: "{{ wordpress_docker_user }}"
+    group: "{{ wordpress_docker_group }}"
+    mode: 0775
+  become: true
+
+- name: "[creating php-fpm pid dir]"
+  file:
+    path: "/run/php"
+    state: directory
+    owner: "{{ wordpress_docker_user }}"
+    group: "{{ wordpress_docker_group }}"
+  become: true
+
+- name: "[setting supervisord facts]"
+  set_fact:
+    supervisor_programs:
+      - name: 'apache2'
+        command: /bin/bash -c "source /etc/apache2/envvars && exec /usr/sbin/apache2 -DFOREGROUND"
+        state: present
+        configuration: |
+          process_name=%(program_name)s_%(process_num)02d
+          numprocs=1
+          autostart=true
+          autorestart=false
+          startsecs=0
+          redirect_stderr=true
+          stdout_logfile=/dev/stdout
+          stdout_logfile_maxbytes=0
+          user=root
+      - name: 'php-fpm'
+        command: /usr/sbin/php-fpm7.0 -R -F -c /etc/php/7.0/fpm/php-fpm.conf
+        state: present
+        configuration: |
+          process_name=%(program_name)s_%(process_num)02d
+          numprocs=1
+          autostart=true
+          autorestart=false
+          startsecs=0
+          redirect_stderr=true
+          stdout_logfile=/dev/stdout
+          stdout_logfile_maxbytes=0
+      - name: 'mysql'
+        command: /usr/sbin/mysqld
+        configuration: |
+          process_name=%(program_name)s_%(process_num)02d
+          numprocs=1
+          autostart=true
+          autorestart=false
+          startsecs=0
+          redirect_stderr=true
+          stdout_logfile=/dev/stdout
+          stdout_logfile_maxbytes=0
+
+- name: installing supervisord
+  include_role:
+    name: geerlingguy.supervisor
+  vars:
+    supervisor_virtualenv: "/opt/supervisord"
+    supervisor_nodaemon: true

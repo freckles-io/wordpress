@@ -1,15 +1,31 @@
 #! /usr/bin/env frecklecute
 
 doc:
-  help: backup wordpress instance
+  help: backup wordpress instance, will create a mysql dump in the 'mysql' subfolder of a 'wordpress' freckle folder, then creates a tar.bz2 file of both the dump and the wordpress files
+
+args:
+  freckle_path:
+    arg_name: freckle_path
+    required: true
+    nargs: 1
+    is_argument: true
+    is_var: false
+  output_file:
+    help: "the path to the output (target) file, defaults to '~/wordpress_backup.tar'"
+    arg_name: target
+    required: false
+    default: "{{ ansible_env.HOME }}/wordpress_backup.tar.bz2"
+    is_var: false
+
 
 tasks:
   - MYSQL_DB:
       state: dump
       name: all
-      target: /vagrant/mysql/mysql_dump.sql
+      target: "{{:: freckle_path ::}}/mysql/mysql_dump.sql"
 
-  # - ARCHIVE:
-      # path: /var/lib/freckles/wordpress-
-      # dest: /var/lib/freckles/wordpress_backup.tar.bz2
-      # format: bz2
+  - ARCHIVE:
+      path: "{{:: freckle_path ::}}"
+      dest: "{{:: output_file ::}}"
+      owner: "{{ ansible_env.USER }}"
+      format: bz2

@@ -19,3 +19,6 @@ wordpress_db_password: wp_user_password
 wordpress_table_prefix: wp_
 wp_lang: en_US
 wp_debug: false
+
+wordpress_docker: false
+wordpress_docker_user: wordpress
