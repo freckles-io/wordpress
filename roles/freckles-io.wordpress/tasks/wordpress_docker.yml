@@ -24,13 +24,13 @@
     mode: 0775
   become: true
 
-- name: "[creating php-fpm pid dir]"
-  file:
-    path: "/run/php"
-    state: directory
-    owner: "{{ wordpress_docker_user }}"
-    group: "{{ wordpress_docker_group }}"
-  become: true
+# - name: "[creating php-fpm pid dir]"
+#   file:
+#     path: "/run/php"
+#     state: directory
+#     owner: "{{ wordpress_docker_user }}"
+#     group: "{{ wordpress_docker_group }}"
+#   become: true
 
 - name: "[setting supervisord facts]"
   set_fact:
@@ -48,18 +48,18 @@
           stdout_logfile=/dev/stdout
           stdout_logfile_maxbytes=0
           user=root
-      - name: 'php-fpm'
-        command: /usr/sbin/php-fpm7.0 -R -F -c /etc/php/7.0/fpm/php-fpm.conf
-        state: present
-        configuration: |
-          process_name=%(program_name)s_%(process_num)02d
-          numprocs=1
-          autostart=true
-          autorestart=false
-          startsecs=0
-          redirect_stderr=true
-          stdout_logfile=/dev/stdout
-          stdout_logfile_maxbytes=0
+      # - name: 'php-fpm'
+      #   command: /usr/sbin/php-fpm7.0 -R -F -c /etc/php/7.0/fpm/php-fpm.conf
+      #   state: present
+      #   configuration: |
+      #     process_name=%(program_name)s_%(process_num)02d
+      #     numprocs=1
+      #     autostart=true
+      #     autorestart=false
+      #     startsecs=0
+      #     redirect_stderr=true
+      #     stdout_logfile=/dev/stdout
+      #     stdout_logfile_maxbytes=0
       - name: 'mysql'
         command: /usr/sbin/mysqld
         configuration: |
