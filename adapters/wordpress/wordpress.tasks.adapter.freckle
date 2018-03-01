@@ -1,7 +1,7 @@
 - name: "[setting defaults]"
   set_fact:
-    wordpress_owner: "{{ freckles_global_vars.owner }}"
-    wordpress_group: "{{ freckles_global_vars.group | default(omit) }}"
+    wordpress_owner: "{{ freckle_folder_vars.owner }}"
+    wordpress_group: "{{ freckle_folder_vars.group | default(omit) }}"
     wordpress_domain: "{{ freckle_folder_vars.wordpress_domain | default('localhost') }}"
     wordpress_port: "{{ freckle_folder_vars.wordpress_port | default(80) }}"
     wordpress_webserver_user: "{{ freckle_folder_vars.owner }}"
@@ -19,6 +19,11 @@
     wp_debug: "{{ freckle_folder_vars.wordpress_debug | default(false) }}"
     wordpress_docker: "{{ freckles_global_vars.freckle_docker | default(false) }}"
   no_log: true
+
+- name: "[getting uid/gid from freckle folder]"
+  stat:
+    path: "{{ freckle_path }}"
+  register: freckle_folder_stat
 
 - name: "[setting docker uid/gid]"
   set_fact:

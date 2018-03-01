@@ -27,5 +27,5 @@ tasks:
   - ARCHIVE:
       path: "{{:: freckle_path ::}}"
       dest: "{{:: output_file ::}}"
-      owner: "{{ ansible_env.USER }}"
+      owner: "{{ ansible_env.USER | default('root') }}"
       format: bz2
