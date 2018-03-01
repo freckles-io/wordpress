@@ -1,6 +1,10 @@
 ---
 # tasks file for freckles-io.wordpress
 
+- name: including vagrant-specific tasks
+  include_tasks: wordpress_vagrant.yml
+  when: wordpress_vagrant
+
 - name: "installing role requirements"
   install:
     packages: "{{ item }}"
