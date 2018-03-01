@@ -1,3 +1,5 @@
+---
+
 - name: "[check if mysql dump exists]"
   stat:
     path: "{{ freckle_path }}/mysql_dump.sql"
@@ -14,7 +16,21 @@
     mysql_databases: "{{ freckle_vars.mysql_databases | default(omit) }}"
     mysql_users: "{{ freckle_vars.mysql_users | default(omit) }}"
     mysql_datadir: /var/lib/mysql
+    mysql_user_id: "{{ freckle_vars.mysql_uid | default(omit) }}"
+    mysql_group_id: "{{ freckle_vars.mysql_gid | default(omit) }}"
   when: not mysql_restore
+
+- name: "creating mysql group"
+  group:
+    name: mysql
+    gid: "{{ mysql_group_id }}"
+  when: "mysql_group_id is defined"
+
+- name: "creating mysql user"
+  group:
+    name: mysql
+    uid: "{{ mysql_user_id }}"
+  when: "mysql_user_id is defined"
 
 - name: "[install mysql]"
   include_role:
