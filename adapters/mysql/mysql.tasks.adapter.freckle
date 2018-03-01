@@ -24,12 +24,14 @@
   group:
     name: mysql
     gid: "{{ mysql_group_id }}"
+    state: present
   when: "mysql_group_id is defined"
 
 - name: "creating mysql user"
   group:
     name: mysql
     uid: "{{ mysql_user_id }}"
+    state: present
   when: "mysql_user_id is defined"
 
 - name: "[install mysql]"
