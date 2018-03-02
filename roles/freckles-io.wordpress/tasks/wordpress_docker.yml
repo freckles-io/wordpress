@@ -72,7 +72,7 @@
           stdout_logfile=/dev/stdout
           stdout_logfile_maxbytes=0
 
-- name: install virtualenv
+- name: installing virtualenv
   install:
     packages:
       - virtualenv
