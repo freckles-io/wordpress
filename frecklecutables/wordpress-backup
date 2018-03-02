@@ -14,7 +14,7 @@ args:
     help: "the path to the output (target) file, defaults to '~/wordpress_backup.tar'"
     arg_name: target
     required: false
-    default: "{{ ansible_env.HOME }}/wordpress_backup.tar.bz2"
+    default: "{{:: freckle_path ::}}/wordpress_backup.tar.bz2"
     is_var: false
 
 
@@ -22,7 +22,7 @@ tasks:
   - MYSQL_DB:
       state: dump
       name: all
-      target: "{{:: freckle_path ::}}/mysql/mysql_dump.sql"
+      target: "{{:: freckle_path ::}}/backup/mysql_dump.sql"
 
   - ARCHIVE:
       path: "{{:: freckle_path ::}}"
