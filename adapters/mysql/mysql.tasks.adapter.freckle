@@ -1,4 +1,16 @@
 ---
+- name: "[setting mysql dump file name]"
+  set_fact:
+    mysql_dump_name: "{{ freckle_vars.mysql_dump_name | default('mysql_dump_latest.sql') }}"
+
+- name: "[check if mysql dump exists]"
+  stat:
+    path: "{{ freckle_path }}/{{ mysql_dump_name }}"
+  register: mysql_dump_file
+
+- name: "[set mysql_restore var]"
+  set_fact:
+    mysql_restore: "{{ mysql_dump_file.stat.exists }}"
 
 - name: "[setting vars]"
   set_fact:
@@ -9,17 +21,7 @@
     mysql_datadir: /var/lib/mysql
     mysql_user_id: "{{ freckle_vars.mysql_uid | default(omit) }}"
     mysql_group_id: "{{ freckle_vars.mysql_gid | default(omit) }}"
-    mysql_dump_name: "{{ freckle_vars.mysql_dump_name | default('mysql_dump_latest.sql') }}"
   when: not mysql_restore
-
-- name: "[check if mysql dump exists]"
-  stat:
-    path: "{{ freckle_path }}/{{ mysql_dump_name }}"
-  register: mysql_dump_file
-
-- name: "[set mysql_restore var]"
-  set_fact:
-    mysql_restore: "{{ mysql_dump_file.stat.exists }}"
 
 - name: "creating mysql group with gid: '{{ mysql_group_id }}'"
   group:
