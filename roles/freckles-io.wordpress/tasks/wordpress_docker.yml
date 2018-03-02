@@ -72,6 +72,12 @@
           stdout_logfile=/dev/stdout
           stdout_logfile_maxbytes=0
 
+- name: install virtualenv
+  install:
+    packages:
+      - virtualenv
+
+
 - name: installing supervisord
   include_role:
     name: geerlingguy.supervisor
