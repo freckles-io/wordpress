@@ -1,14 +1,5 @@
 ---
 
-- name: "[check if mysql dump exists]"
-  stat:
-    path: "{{ freckle_path }}/mysql_dump.sql"
-  register: mysql_dump_file
-
-- name: "[set mysql_restore var]"
-  set_fact:
-    mysql_restore: "{{ mysql_dump_file.stat.exists }}"
-
 - name: "[setting vars]"
   set_fact:
     mysql_root_password: "{{ freckle_folder_vars.mysql_root_password | default(omit) }}"
@@ -18,7 +9,17 @@
     mysql_datadir: /var/lib/mysql
     mysql_user_id: "{{ freckle_vars.mysql_uid | default(omit) }}"
     mysql_group_id: "{{ freckle_vars.mysql_gid | default(omit) }}"
+    mysql_dump_name: "{{ freckle_vars.mysql_dump_name | default('mysql_dump_latest.sql') }}"
   when: not mysql_restore
+
+- name: "[check if mysql dump exists]"
+  stat:
+    path: "{{ freckle_path }}/{{ mysql_dump_name }}"
+  register: mysql_dump_file
+
+- name: "[set mysql_restore var]"
+  set_fact:
+    mysql_restore: "{{ mysql_dump_file.stat.exists }}"
 
 - name: "creating mysql group with gid: '{{ mysql_group_id }}'"
   group:
@@ -39,10 +40,10 @@
     name: geerlingguy.mysql
   become: yes
 
-- name: "restoring mysql database(s) from file: '{{ freckle_path }}/mysql_dump.sql'"
+- name: "restoring mysql database(s) from file: '{{ freckle_path }}/{{ mysql_dump_name }}'"
   mysql_db:
     state: import
     name: all
-    target: "{{ freckle_path }}/mysql_dump.sql"
+    target: "{{ freckle_path }}/{{ mysql_dump_name }}"
   when: mysql_restore
   become: yes
