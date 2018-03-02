@@ -78,3 +78,4 @@
   vars:
     supervisor_virtualenv: "/opt/supervisord"
     supervisor_nodaemon: true
+  become: true
