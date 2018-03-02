@@ -13,6 +13,11 @@ args:
 
 tasks:
   - meta:
+      task-desc: "creating timestamp"
+      name: set_fact
+    vars:
+      timestamp: "{{ ansible_date_time.iso8601 }}"
+  - meta:
       task-desc: "creating backups folder"
       name: file
     vars:
@@ -37,16 +42,31 @@ tasks:
     vars:
       state: dump
       name: all
-      target: "{{:: freckle_path ::}}/backups/mysql/mysql_dump.sql"
+      target: "{{:: freckle_path ::}}/backups/mysql/mysql_dump_{{ timestamp }}.sql"
   - meta:
       name: archive
-      become: true
       task-desc: "creating site backup"
     vars:
       path:
        - "{{:: freckle_path ::}}/wordpress"
        - "{{:: freckle_path ::}}/backups/mysql/mysql_dump.sql"
        - "{{:: freckle_path ::}}/backups/mysql/.freckle"
-      dest: "{{:: freckle_path ::}}/backups/site/wordpress_site_backup.tar.bz2"
+      dest: "{{:: freckle_path ::}}/backups/site/wordpress_site_backup_{{ timestamp }}.tar.bz2"
       owner: "{{ ansible_env.USER | default('root') }}"
       format: bz2
+  - meta:
+      name: file
+      task-desc: "creating symlink to latest mysql dump"
+    vars:
+      src: "mysql_dump_{{ timestamp }}.sql"
+      dest: "{{:: freckle_path ::}}/backups/mysql/mysql_dump_latest.sql"
+      state: link
+      force: true
+  - meta:
+      name: file
+      task-desc: "creating symlink to latest site backup"
+    vars:
+      src: "wordpress_site_backup_{{ timestamp }}.tar.bz2"
+      dest: "{{:: freckle_path ::}}/backups/site/wordpress_site_backup_latest.tar.bz2"
+      state: link
+      force: true
