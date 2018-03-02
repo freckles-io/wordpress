@@ -10,12 +10,6 @@ args:
     nargs: 1
     is_argument: true
     is_var: false
-  output_file:
-    help: "the path to the output (target) file, defaults to '~/wordpress_backup.tar'"
-    arg_name: target
-    required: false
-    # default: "{{:: freckle_path ::}}/backups/wordpress_backup.tar.bz2"
-    is_var: false
 
 tasks:
   - meta:
@@ -42,7 +36,9 @@ tasks:
       target: "{{:: freckle_path ::}}/backups/mysql/mysql_dump.sql"
 
   - ARCHIVE:
-      path: "{{:: freckle_path ::}}"
+      path:
+       - "{{:: freckle_path ::}}/wordpress"
+       - "{{:: freckle_path ::}}/backups/mysql_dump.sql"
       dest: "{{:: freckle_path ::}}/backups/site/wordpress_site_backup.tar.bz2"
       owner: "{{ ansible_env.USER | default('root') }}"
       format: bz2
