@@ -39,6 +39,7 @@ tasks:
       path:
        - "{{:: freckle_path ::}}/wordpress"
        - "{{:: freckle_path ::}}/backups/mysql/mysql_dump.sql"
+       - "{{:: freckle_path ::}}/backups/mysql/.freckle"
       dest: "{{:: freckle_path ::}}/backups/site/wordpress_site_backup.tar.bz2"
       owner: "{{ ansible_env.USER | default('root') }}"
       format: bz2
