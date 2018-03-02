@@ -30,12 +30,19 @@ tasks:
     vars:
       path: "{{:: freckle_path ::}}/backups/site"
       state: directory
-  - MYSQL_DB:
+  - meta:
+      name: mysql_db
+      task-desc: "creating mysql db dump"
+      become: true
+    vars:
       state: dump
       name: all
       target: "{{:: freckle_path ::}}/backups/mysql/mysql_dump.sql"
-
-  - ARCHIVE:
+  - meta:
+      name: archive
+      become: true
+      task-desc: "creating site backup"
+    vars:
       path:
        - "{{:: freckle_path ::}}/wordpress"
        - "{{:: freckle_path ::}}/backups/mysql/mysql_dump.sql"
