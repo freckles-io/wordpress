@@ -120,8 +120,6 @@
           if (!defined("ABSPATH"))
            define("ABSPATH", dirname(__FILE__) . "/");
           require_once(ABSPATH . "wp-settings.php");
-          define("WP_HOME", '{{ wp_site_url }}');
-          define("WP_SITEURL", '{{ wp_site_url }}');
         no_log: true
 
 
@@ -130,6 +128,18 @@
       no_log: true
 
   when: wp_config_file.stat.size == 0
+
+- name: "setting wordpress home var in wp-config.php"
+  lineinfile:
+    path: "{{ wordpress_config_file_path }}"
+    regexp: '^define("WP_HOME",'
+    line: "define(\"WP_HOME\", '{{ wp_site_url }}');"
+
+- name: "setting wordpress siteurl var in wp-config.php"
+  lineinfile:
+    path: "{{ wordpress_config_file_path }}"
+    regexp: '^define("WP_SITEURL",'
+    line: "define(\"WP_SITEURL\", '{{ wp_site_url }}');"
 
 - name: "downloading and extracting wordpress"
   unarchive:
