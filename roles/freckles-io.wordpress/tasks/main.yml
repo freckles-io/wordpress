@@ -132,14 +132,16 @@
 - name: "setting wordpress home var in wp-config.php"
   lineinfile:
     path: "{{ wordpress_config_file_path }}"
-    regexp: '^define("WP_HOME",'
+    regexp: '^define\("WP_HOME",'
     line: "define(\"WP_HOME\", '{{ wp_site_url }}');"
+  become: true
 
 - name: "setting wordpress siteurl var in wp-config.php"
   lineinfile:
     path: "{{ wordpress_config_file_path }}"
-    regexp: '^define("WP_SITEURL",'
+    regexp: '^define\("WP_SITEURL",'
     line: "define(\"WP_SITEURL\", '{{ wp_site_url }}');"
+  become: true
 
 - name: "downloading and extracting wordpress"
   unarchive:

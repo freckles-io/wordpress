@@ -53,3 +53,4 @@
 - name: "[starting wordpress role]"
   include_role:
     name: freckles-io.wordpress
+
