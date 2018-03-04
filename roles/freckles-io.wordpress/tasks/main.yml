@@ -31,6 +31,7 @@
       - rewrite.load
       - php7.0.load
       - ssl.load
+    wp_site_url: "https://{{ wordpress_domain }}"
   when: wordpress_request_https_cert
 
 - name: "[setting variables for non-https deployment]"
@@ -43,7 +44,13 @@
     apache_mods_enabled:
       - rewrite.load
       - php7.0.load
+    wp_site_url: "http://{{ wordpress_domain }}"
   when: not wordpress_request_https_cert
+
+- name: "[setting wp_site_url if custom port]"
+  set_fact:
+    wp_site_url: "http://{{ wordpress_domain }}:{{ wordpress_port }}"
+  when: "not wordpress_request_https_cert and wordpress_port != 80"
 
 # TODO: maybe stop/start apache for letsencrypt request
 - name: "managing https certificate for {{ wordpress_domain }}"
@@ -113,7 +120,10 @@
           if (!defined("ABSPATH"))
            define("ABSPATH", dirname(__FILE__) . "/");
           require_once(ABSPATH . "wp-settings.php");
+          define("WP_HOME", '{{ wp_site_url }}');
+          define("WP_SITEURL", '{{ wp_site_url }}');
         no_log: true
+
 
     - copy: content="{{ wordpress_config }}" dest="{{ wordpress_config_file_path }}"
       become: true
