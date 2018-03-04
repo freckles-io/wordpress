@@ -44,29 +44,29 @@ tasks:
       name: all
       target: "{{:: freckle_path ::}}/backups/mysql/mysql_dump_{{ timestamp }}.sql"
   - meta:
+      name: copy
+      task-desc: "copying latest mysql dump to file 'mysql_dump_latest.sql'"
+    vars:
+      src: "mysql_dump_{{ timestamp }}.sql"
+      dest: "{{:: freckle_path ::}}/backups/mysql/mysql_dump_latest.sql"
+      owner: "{{ ansible_env.USER | default('root') }}"
+      force: true
+  - meta:
       name: archive
       task-desc: "creating site backup"
     vars:
       path:
        - "{{:: freckle_path ::}}/wordpress"
-       - "{{:: freckle_path ::}}/backups/mysql/mysql_dump.sql"
+       - "{{:: freckle_path ::}}/backups/mysql/mysql_dump_latest.sql"
        - "{{:: freckle_path ::}}/backups/mysql/.freckle"
       dest: "{{:: freckle_path ::}}/backups/site/wordpress_site_backup_{{ timestamp }}.tar.bz2"
       owner: "{{ ansible_env.USER | default('root') }}"
       format: bz2
   - meta:
-      name: file
-      task-desc: "creating symlink to latest mysql dump"
-    vars:
-      src: "mysql_dump_{{ timestamp }}.sql"
-      dest: "{{:: freckle_path ::}}/backups/mysql/mysql_dump_latest.sql"
-      state: link
-      force: true
-  - meta:
-      name: file
-      task-desc: "creating symlink to latest site backup"
+      name: copy
+      task-desc: "copying latest site backup to file wordpress_site_backup_latest.tar.bz2"
     vars:
       src: "wordpress_site_backup_{{ timestamp }}.tar.bz2"
       dest: "{{:: freckle_path ::}}/backups/site/wordpress_site_backup_latest.tar.bz2"
-      state: link
       force: true
+      owner: "{{ ansible_env.USER | default('root') }}"
