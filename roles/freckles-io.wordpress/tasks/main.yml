@@ -144,11 +144,11 @@
 #   become: true
 
 - name: "setting wordpress siteurl in mysql table"
-  command: mysql -u root -e "update {{ wp_table_prefix }}_options SET option_value = '{{ wp_site_url }}' where option_id = 1 and option_name = 'siteurl';" wp_database
+  command: "mysql -u root -e \"update {{ wp_table_prefix }}options SET option_value = '{{ wp_site_url }}' where option_id = 1 and option_name = 'siteurl';\" {{ wp_db_name }}"
   become: true
 
 - name: "setting wordpress home in mysql table"
-  command: mysql -u root -e "update {{ wp_table_prefix }}_options SET option_value = '{{ wp_site_url }}' where option_id = 2 and option_name = 'home';" wp_database
+  command: "mysql -u root -e \"update {{ wp_table_prefix }}options SET option_value = '{{ wp_site_url }}' where option_id = 2 and option_name = 'home';\" {{ wp_db_name }}"
   become: true
 
 - name: "downloading and extracting wordpress"
