@@ -47,7 +47,7 @@ tasks:
       name: copy
       task-desc: "copying latest mysql dump to file 'mysql_dump_latest.sql'"
     vars:
-      src: "mysql_dump_{{ timestamp }}.sql"
+      src: "{{:: freckle_path ::}}/backups/mysql/mysql_dump_{{ timestamp }}.sql"
       dest: "{{:: freckle_path ::}}/backups/mysql/mysql_dump_latest.sql"
       owner: "{{ ansible_env.USER | default('root') }}"
       force: true
@@ -66,7 +66,7 @@ tasks:
       name: copy
       task-desc: "copying latest site backup to file wordpress_site_backup_latest.tar.bz2"
     vars:
-      src: "wordpress_site_backup_{{ timestamp }}.tar.bz2"
+      src: "{{:: freckle_path ::}}/backups/site/wordpress_site_backup_{{ timestamp }}.tar.bz2"
       dest: "{{:: freckle_path ::}}/backups/site/wordpress_site_backup_latest.tar.bz2"
       force: true
       owner: "{{ ansible_env.USER | default('root') }}"
