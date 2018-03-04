@@ -129,18 +129,26 @@
 
   when: wp_config_file.stat.size == 0
 
-- name: "setting wordpress home var in wp-config.php"
-  lineinfile:
-    path: "{{ wordpress_config_file_path }}"
-    regexp: '^define\("WP_HOME",'
-    line: "define(\"WP_HOME\", '{{ wp_site_url }}');"
+# - name: "setting wordpress home var in wp-config.php"
+#   lineinfile:
+#     path: "{{ wordpress_config_file_path }}"
+#     regexp: '^define\("WP_HOME",'
+#     line: "define(\"WP_HOME\", '{{ wp_site_url }}');"
+#   become: true
+
+# - name: "setting wordpress siteurl var in wp-config.php"
+#   lineinfile:
+#     path: "{{ wordpress_config_file_path }}"
+#     regexp: '^define\("WP_SITEURL",'
+#     line: "define(\"WP_SITEURL\", '{{ wp_site_url }}');"
+#   become: true
+
+- name: "setting wordpress siteurl in mysql table"
+  command: mysql -u root -e "update {{ wp_table_prefix }}_options SET option_value = '{{ wp_site_url }}' where option_id = 1 and option_name = 'siteurl';" wp_database
   become: true
 
-- name: "setting wordpress siteurl var in wp-config.php"
-  lineinfile:
-    path: "{{ wordpress_config_file_path }}"
-    regexp: '^define\("WP_SITEURL",'
-    line: "define(\"WP_SITEURL\", '{{ wp_site_url }}');"
+- name: "setting wordpress home in mysql table"
+  command: mysql -u root -e "update {{ wp_table_prefix }}_options SET option_value = '{{ wp_site_url }}' where option_id = 2 and option_name = 'home';" wp_database
   become: true
 
 - name: "downloading and extracting wordpress"
