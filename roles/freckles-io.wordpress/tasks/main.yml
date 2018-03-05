@@ -20,7 +20,7 @@
           Redirect / https://{{ wordpress_domain }}/
     apache_vhosts_ssl:
       - servername: "{{ wordpress_domain }}"
-        documentroot: "/var/www/wordpress"
+        documentroot: "{{ wordpress_wordpress_root }}"
         allow_override: All
         options: "+FollowSymLinks"
         certificate_file: "/etc/letsencrypt/live/{{ wordpress_domain }}/cert.pem"
@@ -38,7 +38,7 @@
   set_fact:
     apache_vhosts:
       - servername: "{{ wordpress_domain }}"
-        documentroot: "/var/www/wordpress"
+        documentroot: "{{ wordpress_wordpress_root }}"
         options: "+FollowSymLinks"
         allow_override: All
     apache_mods_enabled:
@@ -57,7 +57,7 @@
   include_role:
     name: thefinn93.letsencrypt
   vars:
-    letsencrypt_webroot_path: /var/www/wordpress
+    letsencrypt_webroot_path: "{{ wordpress_wordpress_root }}"
     letsencrypt_renewal_command_args: '--renew-hook "systemctl restart apache2"'
   when: wordpress_request_https_cert
 
