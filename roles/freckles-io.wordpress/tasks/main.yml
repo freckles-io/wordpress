@@ -52,7 +52,7 @@
     wp_site_url: "http://{{ wordpress_domain }}:{{ wordpress_port }}"
   when: "not wordpress_request_https_cert and wordpress_port != 80"
 
-- name: "[setting staging server]"
+- name: "setting letsencrypt server to 'staging'"
   set_fact:
     letsencrypt_server: https://acme-staging.api.letsencrypt.org/directory
   when: wordpress_letsencrypt_staging
