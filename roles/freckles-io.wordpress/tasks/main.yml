@@ -123,8 +123,9 @@
           require_once(ABSPATH . "wp-settings.php");
         no_log: true
 
-
-    - copy: content="{{ wordpress_config }}" dest="{{ wordpress_config_file_path }}"
+    - copy:
+        content: "{{ wordpress_config }}"
+        dest: "{{ wordpress_config_file_path }}"
       become: true
       no_log: true
 

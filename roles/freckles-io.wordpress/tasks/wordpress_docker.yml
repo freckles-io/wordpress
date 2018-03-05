@@ -84,4 +84,5 @@
   vars:
     supervisor_virtualenv: "/opt/supervisord"
     supervisor_nodaemon: true
+    supervisor_log_dir: /var/log/supervisor
   become: true
