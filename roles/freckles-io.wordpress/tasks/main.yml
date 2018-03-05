@@ -102,6 +102,7 @@
 
     - command: curl http://api.wordpress.org/secret-key/1.1/salt/
       register: wp_salt
+      no_log: true
 
     - set_fact:
         wordpress_config: |
