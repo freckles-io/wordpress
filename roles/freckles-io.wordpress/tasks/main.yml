@@ -52,6 +52,11 @@
     wp_site_url: "http://{{ wordpress_domain }}:{{ wordpress_port }}"
   when: "not wordpress_request_https_cert and wordpress_port != 80"
 
+- name: "[setting staging server]"
+  set_fact:
+    letsencrypt_server: https://acme-staging.api.letsencrypt.org/directory
+  when: wordpress_letsencrypt_staging
+
 # TODO: maybe stop/start apache for letsencrypt request
 - name: "managing https certificate for {{ wordpress_domain }}"
   include_role:
@@ -59,6 +64,7 @@
   vars:
     letsencrypt_webroot_path: "{{ wordpress_wordpress_root }}"
     letsencrypt_renewal_command_args: '--renew-hook "systemctl restart apache2"'
+
   when: wordpress_request_https_cert
 
 - name: "[starting php role]"

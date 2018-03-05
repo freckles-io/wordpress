@@ -18,6 +18,7 @@
     wp_lang: "{{ freckle_folder_vars.wordpress_language | default('en_US') }}"
     wp_debug: "{{ freckle_folder_vars.wordpress_debug | default(false) }}"
     wordpress_docker: "{{ freckles_global_vars.freckle_docker | default(false) }}"
+    wordpress_letsencrypt_staging: "{{ freckle_folder_vars.wordpress_letsencrypt_staging | default(false) }}"
   no_log: true
 
 - name: "[getting uid/gid from freckle folder]"
@@ -36,12 +37,12 @@
 - name: "[enabling letsencrypt]"
   set_fact:
     wordpress_request_https_cert: true
-  when: "freckle_folder_vars.get('letsencrypt_email', False) and freckle_folder_vars.get('letsencrypt_email', False) not in ['false', 'False', 'no', 'No', 'none', 'None']"
+  when: "freckle_folder_vars.get('letsencrypt_email', False) and freckle_folder_vars.get('letsencrypt_email', 'False') not in ['false', 'False', 'no', 'No', 'none', 'None']"
 
 - name: "[disabling letsencrypt]"
   set_fact:
     wordpress_request_https_cert: false
-  when: "not freckle_folder_vars.get('letsencrypt_email', False) or freckle_folder_vars.get('letsencrypt_email', False) in ['false', 'False', 'no', 'No', 'none', 'None']"
+  when: "not freckle_folder_vars.get('letsencrypt_email', False) or freckle_folder_vars.get('letsencrypt_email', 'False') in ['false', 'False', 'no', 'No', 'none', 'None']"
 
 - name: "[setting https related stuff]"
   set_fact:
