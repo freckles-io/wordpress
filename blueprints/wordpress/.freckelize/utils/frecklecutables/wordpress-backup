@@ -1,0 +1,72 @@
+#! /usr/bin/env frecklecute
+
+doc:
+  help: backup wordpress instance, will create a mysql dump in the 'mysql' subfolder of a 'wordpress' freckle folder, then creates a tar.bz2 file of both the dump and the wordpress files
+
+args:
+  freckle_path:
+    arg_name: freckle_path
+    required: true
+    nargs: 1
+    is_argument: true
+    is_var: false
+
+tasks:
+  - meta:
+      task-desc: "creating timestamp"
+      name: set_fact
+    vars:
+      timestamp: "{{ ansible_date_time.iso8601 }}"
+  - meta:
+      task-desc: "creating backups folder"
+      name: file
+    vars:
+      path: "{{:: freckle_path ::}}/backups"
+      state: directory
+  - meta:
+      task-desc: "creating mysql backup folder"
+      name: file
+    vars:
+      path: "{{:: freckle_path ::}}/backups/mysql"
+      state: directory
+  - meta:
+      task-desc: "creating site backup folder"
+      name: file
+    vars:
+      path: "{{:: freckle_path ::}}/backups/site"
+      state: directory
+  - meta:
+      name: mysql_db
+      task-desc: "creating mysql db dump"
+      become: true
+    vars:
+      state: dump
+      name: all
+      target: "{{:: freckle_path ::}}/backups/mysql/mysql_dump_{{ timestamp }}.sql"
+  - meta:
+      name: copy
+      task-desc: "copying latest mysql dump to file 'mysql_dump_latest.sql'"
+    vars:
+      src: "{{:: freckle_path ::}}/backups/mysql/mysql_dump_{{ timestamp }}.sql"
+      dest: "{{:: freckle_path ::}}/backups/mysql/mysql_dump_latest.sql"
+      owner: "{{ ansible_env.USER | default('root') }}"
+      force: true
+  - meta:
+      name: archive
+      task-desc: "creating site backup"
+    vars:
+      path:
+       - "{{:: freckle_path ::}}/wordpress"
+       - "{{:: freckle_path ::}}/backups/mysql/mysql_dump_latest.sql"
+       - "{{:: freckle_path ::}}/backups/mysql/.freckle"
+      dest: "{{:: freckle_path ::}}/backups/site/wordpress_site_backup_{{ timestamp }}.tar.bz2"
+      owner: "{{ ansible_env.USER | default('root') }}"
+      format: bz2
+  - meta:
+      name: copy
+      task-desc: "copying latest site backup to file wordpress_site_backup_latest.tar.bz2"
+    vars:
+      src: "{{:: freckle_path ::}}/backups/site/wordpress_site_backup_{{ timestamp }}.tar.bz2"
+      dest: "{{:: freckle_path ::}}/backups/site/wordpress_site_backup_latest.tar.bz2"
+      force: true
+      owner: "{{ ansible_env.USER | default('root') }}"

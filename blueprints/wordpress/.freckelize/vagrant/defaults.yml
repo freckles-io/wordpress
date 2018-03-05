@@ -1,0 +1,6 @@
+- wordpress:freckle:
+    owner: vagrant
+    group: vagrant
+
+- wordpress:wordpress:
+    wordpress_port: 8080

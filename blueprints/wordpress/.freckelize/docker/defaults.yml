@@ -1,0 +1,7 @@
+- wordpress:freckle:
+    owner: freckles
+    group: freckles
+    freckle_docker: true
+
+- wordpress:wordpress:
+    wordpress_port: 8080

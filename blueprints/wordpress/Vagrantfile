@@ -1,0 +1,29 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+
+  config.vm.box = "freckles-dev"
+
+  # config.vm.box_check_update = false
+
+  config.vm.network "forwarded_port", guest: 8080, host: 8080
+
+  config.trigger.before :halt do
+    info "Backing up the database and site before halting the VM..."
+    run_remote  "sudo -u vagrant /home/vagrant/.local/bin/frecklecute -r frkl:wordpress wordpress-backup /vagrant"
+  end
+
+  config.vm.synced_folder ".", "/vagrant"
+  # can't seem to get MySQL in Vagrant/Virtualbox to work with a shared folder :-(
+  # config.vm.synced_folder "./.freckelize/vagrant/mysql_current", "/var/lib/mysql", id: "mysql_current", mount_options: ["uid=108", "gid=113"]
+
+  config.vm.provider "virtualbox" do |vb|
+    vb.gui = false
+    vb.memory = "2048"
+  end
+
+  config.vm.provision "shell", privileged: false, inline: <<-SHELL
+    freckelize -v /vagrant/.freckelize/vagrant/defaults.yml -r frkl:wordpress -f /vagrant/backups -f /vagrant/wordpress
+  SHELL
+end
