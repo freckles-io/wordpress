@@ -20,7 +20,7 @@ defaults:
     - name: update-utils
       url: "https://raw.githubusercontent.com/freckles-io/wordpress/master/blueprints/wordpress/%7B%7Bcookiecutter.freckle_folder_name%7D%7D/.freckelize/utils/update-utils"
     - name: wordpress-backup
-      url: "https://raw.githubusercontent.com/freckles-io/wordpress/master/frecklecutables/wordpress-backup"
+      url: "https://raw.githubusercontent.com/freckles-io/wordpress/master/blueprints/wordpress/%7B%7Bcookiecutter.freckle_folder_name%7D%7D/.freckelize/utils/wordpress-backup"
     - name: wordpress-content-backup
       url: "https://raw.githubusercontent.com/freckles-io/wordpress/master/blueprints/wordpress/%7B%7Bcookiecutter.freckle_folder_name%7D%7D/.freckelize/utils/wordpress-content-backup"
     - name: wordpress-db-dump
