@@ -29,10 +29,9 @@ defaults:
       url: "https://raw.githubusercontent.com/freckles-io/wordpress/master/blueprints/wordpress/%7B%7Bcookiecutter.freckle_folder_name%7D%7D/.freckelize/utils/wordpress-db-import"
 
 tasks:
-
   - meta:
       name: get_url
-      with_items: utils
+      with_items: {{:: utils ::}}
     vars:
       url: "{{ item.url }}"
       dest: "{{:: utils_path | default(frecklecutable.dir, true) ::}}/{{ item.name }}"
