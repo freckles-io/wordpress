@@ -46,6 +46,12 @@ tasks:
       name: all
       target: "{{:: freckle_path ::}}/backups/mysql/mysql_dump_{{ timestamp }}.sql"
   - meta:
+      name: file
+      task-desc: setting permissions on mysql dump file
+      become: true
+   vars:
+      mode: 0660
+  - meta:
       name: copy
       task-desc: "copying latest mysql dump to file 'mysql_dump_latest.sql'"
       become: true
@@ -54,4 +60,5 @@ tasks:
       dest: "{{:: freckle_path ::}}/backups/mysql/mysql_dump_latest.sql"
       owner: "{{ backup_user }}"
       group: "{{ backup_group }}"
+      mode: 0660
       force: true
