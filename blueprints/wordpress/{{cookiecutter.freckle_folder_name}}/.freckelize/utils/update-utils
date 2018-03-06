@@ -32,10 +32,11 @@ tasks: |
   {%:: for item in utils ::%}
   - meta:
       name: get_url
+      task-desc: "downloading '{{:: item.name ::}}' script"
       task-type: ansible_task
     vars:
       url: "{{:: item.url ::}}"
       dest: "{{ '{{:: utils_path | default(frecklecutable.dir, true) ::}}/{{:: item.name ::}}' }}"
       force: true
-      mode: 0775
+      mode: "0775"
   {%:: endfor ::%}
