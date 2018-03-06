@@ -4,4 +4,4 @@
     freckle_docker: true
 
 - wordpress:wordpress:
-    wordpress_port: 8080
+    wordpress_port: {{ cookiecutter.wordpress_dev_port }}

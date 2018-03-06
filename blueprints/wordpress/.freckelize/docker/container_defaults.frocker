@@ -1,2 +1,0 @@
-PORTS=-p 8080:8080
-REPOS=-r frkl:wordpress

@@ -1,0 +1,2 @@
+PORTS=-p {{ cookiecutter.wordpress_dev_port }}:{{ cookiecutter.wordpress_dev_port }}
+REPOS=-r frkl:wordpress

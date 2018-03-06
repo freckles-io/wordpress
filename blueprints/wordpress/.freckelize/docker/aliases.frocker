@@ -1,3 +1,0 @@
-backup-site=-u freckles CONTAINER_NAME /home/freckles/.local/bin/frecklecute /freckle/.freckelize/utils/frecklecutables/wordpress-backup /freckle
-db-import=-u freckles CONTAINER_NAME /home/freckles/.local/bin/frecklecute /freckle/.freckelize/utils/frecklecutables/wordpress-db-import /freckle/backups/mysql/mysql_dump_latest.sql
-db-dump=-u freckles CONTAINER_NAME /home/freckles/.local/bin/frecklecute /freckle/.freckelize/utils/frecklecutables/wordpress-db-dump /freckle
