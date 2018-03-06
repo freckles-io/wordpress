@@ -11,14 +11,29 @@ args:
     is_argument: true
     is_var: false
 
+vars:
+  utils:
+    - name: frocker
+      url: "https://raw.githubusercontent.com/makkus/frocker/master/frocker"
+    - name: init_wordpress_blueprint.sh
+      url: "https://raw.githubusercontent.com/freckles-io/wordpress/master/blueprints/wordpress/%7B%7Bcookiecutter.freckle_folder_name%7D%7D/.freckelize/utils/init_wordpress_blueprint.sh"
+    - name: update-utils
+      url: "https://raw.githubusercontent.com/freckles-io/wordpress/master/blueprints/wordpress/%7B%7Bcookiecutter.freckle_folder_name%7D%7D/.freckelize/utils/update-utils"
+    - name: wordpress-backup
+      url: "https://raw.githubusercontent.com/freckles-io/wordpress/master/frecklecutables/wordpress-backup"
+    - name: wordpress-content-backup
+      url: "https://raw.githubusercontent.com/freckles-io/wordpress/master/blueprints/wordpress/%7B%7Bcookiecutter.freckle_folder_name%7D%7D/.freckelize/utils/wordpress-content-backup"
+    - name: wordpress-db-dump
+      url: "https://raw.githubusercontent.com/freckles-io/wordpress/master/blueprints/wordpress/%7B%7Bcookiecutter.freckle_folder_name%7D%7D/.freckelize/utils/wordpress-db-dump"
+    - name: wordpress-db-import
+      url: "https://raw.githubusercontent.com/freckles-io/wordpress/master/blueprints/wordpress/%7B%7Bcookiecutter.freckle_folder_name%7D%7D/.freckelize/utils/wordpress-db-import"
+
 tasks:
 
-  - get_url:
-      url: https://raw.githubusercontent.com/freckles-io/wordpress/master/frecklecutables/wordpress-backup
-      dest: "{{:: utils_path | default(frecklecutable.dir, true) ::}}/wordpress-backup"
+  - meta:
+      name: get_url
+      with_items: utils
+    vars:
+      url: "{{ item.url }}"
+      dest: "{{:: utils_path | default(frecklecutable.dir, true) ::}}/{{ item.name }}"
       force: true
-  - get_url:
-      url: https://raw.githubusercontent.com/makkus/frocker/master/frocker
-      dest: "{{:: utils_path | default(frecklecutable.dir, true) ::}}/frocker"
-      force: true
-
