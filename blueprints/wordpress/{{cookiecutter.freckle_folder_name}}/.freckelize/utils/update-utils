@@ -31,7 +31,10 @@ defaults:
 
 tasks: |
   {%:: for item in utils ::%}
-  - get_url:
+  - meta:
+      name: get_url
+      task-type: ansible_task
+    vars:
       url: "{{:: item.url ::}}"
       dest: "{{:: utils_path | default(frecklecutable.dir, true) ::}}/{{:: item.name ::}}"
   {%:: endfor ::%}
