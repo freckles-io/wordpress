@@ -34,5 +34,6 @@ Vagrant.configure("2") do |config|
 
   config.vm.provision "shell", privileged: false, inline: <<-SHELL
     freckelize -v /vagrant/.freckelize/vagrant/defaults.yml -r frkl:wordpress -f /vagrant/backups -f /vagrant/wordpress
+    echo "PATH=$PATH:/vagrant/.freckelize/utils" >> /home/vagrant/.profile
   SHELL
 end
