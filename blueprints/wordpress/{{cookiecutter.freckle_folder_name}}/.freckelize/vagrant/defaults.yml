@@ -1,8 +1,8 @@
 - wordpress:freckle:
     owner: vagrant
     group: vagrant
+    freckle_vagrant: true
 
 - wordpress:wordpress:
     wordpress_port: {{ cookiecutter.wordpress_dev_port }}
     letsencrypt_email: none
-    wordpress_vagrant: true

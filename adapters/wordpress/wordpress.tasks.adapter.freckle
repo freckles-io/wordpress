@@ -18,6 +18,7 @@
     wp_lang: "{{ freckle_folder_vars.wordpress_language | default('en_US') }}"
     wp_debug: "{{ freckle_folder_vars.wordpress_debug | default(false) }}"
     wordpress_docker: "{{ freckles_global_vars.freckle_docker | default(false) }}"
+    wordpress_vagrant: "{{ freckles_global_vars.freckle_vagrant | default(false) }}"
     wordpress_letsencrypt_staging: "{{ freckle_folder_vars.wordpress_letsencrypt_staging | default(false) }}"
   no_log: true
 
