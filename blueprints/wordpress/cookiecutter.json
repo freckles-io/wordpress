@@ -1,7 +1,6 @@
 {
     "freckle_folder_name": "wordpress",
     "wordpress_domain": "localhost",
-    "wordpress_port": 80,
     "wordpress_dev_port": 8080,
     "letsencrypt_email": "none",
     "_copy_without_render": [
