@@ -49,7 +49,7 @@ tasks:
       dest: "{{:: freckle_path ::}}/backups/content/wordpress_content_backup_{{ timestamp }}.tar.bz2"
       owner: "{{ backup_user }}"
       group: "{{ backup_group }}"
-      mode: 0660
+      mode: "0660"
       format: bz2
   - meta:
       name: copy
@@ -59,6 +59,6 @@ tasks:
       src: "{{:: freckle_path ::}}/backups/content/wordpress_content_backup_{{ timestamp }}.tar.bz2"
       dest: "{{:: freckle_path ::}}/backups/content/wordpress_content_backup_latest.tar.bz2"
       force: true
-      mode: 0660
+      mode: "0660"
       owner: "{{ backup_user }}"
       group: "{{ backup_group }}"

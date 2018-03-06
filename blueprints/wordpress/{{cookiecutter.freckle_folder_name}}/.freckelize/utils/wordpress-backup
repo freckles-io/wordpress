@@ -62,14 +62,14 @@ tasks:
       task-desc: setting permissions on mysql dump file
       become: true
     vars:
-      mode: 0660
+      mode: "0660"
       path: "{{:: freckle_path ::}}/backups/mysql/mysql_dump_{{ timestamp }}.sql"
   - meta:
       name: copy
       task-desc: "copying latest mysql dump to file 'mysql_dump_latest.sql'"
       become: true
     vars:
-      mode: 0660
+      mode: "0660"
       src: "{{:: freckle_path ::}}/backups/mysql/mysql_dump_{{ timestamp }}.sql"
       dest: "{{:: freckle_path ::}}/backups/mysql/mysql_dump_latest.sql"
       owner: "{{ backup_user }}"
@@ -87,7 +87,7 @@ tasks:
       dest: "{{:: freckle_path ::}}/backups/content/wordpress_content_backup_{{ timestamp }}.tar.bz2"
       owner: "{{ backup_user }}"
       group: "{{ backup_group }}"
-      mode: 0660
+      mode: "0660"
       format: bz2
   - meta:
       name: copy
@@ -97,7 +97,7 @@ tasks:
       src: "{{:: freckle_path ::}}/backups/content/wordpress_content_backup_{{ timestamp }}.tar.bz2"
       dest: "{{:: freckle_path ::}}/backups/content/wordpress_content_backup_latest.tar.bz2"
       force: true
-      mode: 0660
+      mode: "0660"
       owner: "{{ backup_user }}"
       group: "{{ backup_group }}"
   - meta:
@@ -112,7 +112,7 @@ tasks:
       dest: "{{:: freckle_path ::}}/backups/site/wordpress_site_backup_{{ timestamp }}.tar.bz2"
       owner: "{{ backup_user }}"
       group: "{{ backup_group }}"
-      mode: 0660
+      mode: "0660"
       format: bz2
   - meta:
       name: copy
@@ -122,6 +122,6 @@ tasks:
       src: "{{:: freckle_path ::}}/backups/site/wordpress_site_backup_{{ timestamp }}.tar.bz2"
       dest: "{{:: freckle_path ::}}/backups/site/wordpress_site_backup_latest.tar.bz2"
       force: true
-      mode: 0660
+      mode: "0660"
       owner: "{{ backup_user }}"
       group: "{{ backup_group }}"
