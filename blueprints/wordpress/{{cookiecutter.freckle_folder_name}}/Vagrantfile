@@ -14,6 +14,15 @@ Vagrant.configure("2") do |config|
     run_remote  "sudo -u vagrant /home/vagrant/.local/bin/frecklecute /vagrant/.freckelize/utils/wordpress-backup /vagrant"
   end
 
+  # you might want to un-comment the following if necessary
+  # ---
+  # config.trigger.before :destroy do
+  #   info "Backing up the database and site before destroying the VM..."
+  #   run_remote  "sudo -u vagrant /home/vagrant/.local/bin/frecklecute /vagrant/.freckelize/utils/wordpress-backup /vagrant"
+  # end
+  # ---
+
+
   config.vm.synced_folder ".", "/vagrant"
   # can't seem to get MySQL in Vagrant/Virtualbox to work with a shared folder :-(
   # config.vm.synced_folder "./.freckelize/vagrant/mysql_current", "/var/lib/mysql", id: "mysql_current", mount_options: ["uid=108", "gid=113"]

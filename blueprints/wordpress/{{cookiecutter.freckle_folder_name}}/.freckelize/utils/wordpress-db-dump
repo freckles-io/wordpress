@@ -12,6 +12,7 @@ args:
     is_var: false
 
 tasks:
+
   - meta:
       name: stat
       register: perms
@@ -49,7 +50,7 @@ tasks:
       name: file
       task-desc: setting permissions on mysql dump file
       become: true
-   vars:
+    vars:
       mode: 0660
   - meta:
       name: copy

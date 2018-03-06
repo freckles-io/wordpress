@@ -1,7 +1,7 @@
 #! /usr/bin/env frecklecute
 
 doc:
-  help: backup wordpress instance, will create a mysql dump in the 'mysql' subfolder of a 'wordpress' freckle folder, then creates a tar.bz2 file of both the dump and the wordpress files
+  help: backup wordpress instance, will create a mysql dump in the 'mysql' subfolder of a 'wordpress' freckle folder, then creates a tar.bz2 file of both the dump and the wordpress files. The 'freckle_path' needs to be the base folder that contains both the 'wordpress' and 'backups' childs.
 
 args:
   freckle_path:
@@ -38,6 +38,12 @@ tasks:
       path: "{{:: freckle_path ::}}/backups/mysql"
       state: directory
   - meta:
+      task-desc: "creating content backup folder"
+      name: file
+    vars:
+      path: "{{:: freckle_path ::}}/backups/content"
+      state: directory
+  - meta:
       task-desc: "creating site backup folder"
       name: file
     vars:
@@ -55,8 +61,9 @@ tasks:
       name: file
       task-desc: setting permissions on mysql dump file
       become: true
-   vars:
+    vars:
       mode: 0660
+      path: "{{:: freckle_path ::}}/backups/mysql/mysql_dump_{{ timestamp }}.sql"
   - meta:
       name: copy
       task-desc: "copying latest mysql dump to file 'mysql_dump_latest.sql'"
@@ -68,6 +75,31 @@ tasks:
       owner: "{{ backup_user }}"
       group: "{{ backup_group }}"
       force: true
+  - meta:
+      name: archive
+      task-desc: "creating backup of content folder"
+      become: true
+    vars:
+      path:
+       - "{{:: freckle_path ::}}/wordpress/.freckle"
+       - "{{:: freckle_path ::}}/wordpress/wp-config.php"
+       - "{{:: freckle_path ::}}/wordpress/wp-content"
+      dest: "{{:: freckle_path ::}}/backups/content/wordpress_content_backup_{{ timestamp }}.tar.bz2"
+      owner: "{{ backup_user }}"
+      group: "{{ backup_group }}"
+      mode: 0660
+      format: bz2
+  - meta:
+      name: copy
+      task-desc: "copying latest content backup to file wordpress_content_backup_latest.tar.bz2"
+      become: true
+    vars:
+      src: "{{:: freckle_path ::}}/backups/content/wordpress_content_backup_{{ timestamp }}.tar.bz2"
+      dest: "{{:: freckle_path ::}}/backups/content/wordpress_content_backup_latest.tar.bz2"
+      force: true
+      mode: 0660
+      owner: "{{ backup_user }}"
+      group: "{{ backup_group }}"
   - meta:
       name: archive
       task-desc: "creating site backup"
