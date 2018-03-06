@@ -11,7 +11,7 @@ args:
     is_argument: true
     is_var: false
 
-vars:
+defaults:
   utils:
     - name: frocker
       url: "https://raw.githubusercontent.com/makkus/frocker/master/frocker"
