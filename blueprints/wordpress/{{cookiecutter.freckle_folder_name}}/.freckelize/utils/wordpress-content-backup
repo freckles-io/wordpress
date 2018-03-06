@@ -1,0 +1,64 @@
+#! /usr/bin/env frecklecute
+
+doc:
+  help: backup  wordpress content folder
+
+args:
+  freckle_path:
+    arg_name: freckle_path
+    required: true
+    nargs: 1
+    is_argument: true
+    is_var: false
+
+tasks:
+  - meta:
+      name: stat
+      register: perms
+    vars:
+      path: "{{:: freckle_path ::}}"
+  - set_fact:
+      backup_user: "{{ perms.stat.pw_name }}"
+      backup_group: "{{ perms.stat.gr_name }}"
+  - meta:
+      task-desc: "creating timestamp"
+      name: set_fact
+    vars:
+      timestamp: "{{ ansible_date_time.iso8601 }}"
+  - meta:
+      task-desc: "creating backups folder"
+      name: file
+    vars:
+      path: "{{:: freckle_path ::}}/backups"
+      state: directory
+  - meta:
+      task-desc: "creating content backup folder"
+      name: file
+    vars:
+      path: "{{:: freckle_path ::}}/backups/content"
+      state: directory
+  - meta:
+      name: archive
+      task-desc: "creating backup of content folder"
+      become: true
+    vars:
+      path:
+       - "{{:: freckle_path ::}}/wordpress/.freckle"
+       - "{{:: freckle_path ::}}/wordpress/wp-config.php"
+       - "{{:: freckle_path ::}}/wordpress/wp-content"
+      dest: "{{:: freckle_path ::}}/backups/content/wordpress_content_backup_{{ timestamp }}.tar.bz2"
+      owner: "{{ backup_user }}"
+      group: "{{ backup_group }}"
+      mode: 0660
+      format: bz2
+  - meta:
+      name: copy
+      task-desc: "copying latest content backup to file wordpress_content_backup_latest.tar.bz2"
+      become: true
+    vars:
+      src: "{{:: freckle_path ::}}/backups/content/wordpress_content_backup_{{ timestamp }}.tar.bz2"
+      dest: "{{:: freckle_path ::}}/backups/content/wordpress_content_backup_latest.tar.bz2"
+      force: true
+      mode: 0660
+      owner: "{{ backup_user }}"
+      group: "{{ backup_group }}"
