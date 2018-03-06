@@ -13,14 +13,6 @@ args:
 
 tasks:
   - meta:
-      name: stat
-      register: perms
-    vars:
-      path: "{{:: freckle_path ::}}"
-  - set_fact:
-      backup_user: "{{ perms.stat.pw_name }}"
-      backup_group: "{{ perms.stat.gr_name }}"
-  - meta:
       task-desc: "creating timestamp"
       name: set_fact
     vars:
@@ -54,12 +46,10 @@ tasks:
   - meta:
       name: copy
       task-desc: "copying latest mysql dump to file 'mysql_dump_latest.sql'"
-      become: true
     vars:
       src: "{{:: freckle_path ::}}/backups/mysql/mysql_dump_{{ timestamp }}.sql"
       dest: "{{:: freckle_path ::}}/backups/mysql/mysql_dump_latest.sql"
-      owner: "{{ backup_user }}"
-      group: "{{ backup_group }}"
+      owner: "{{ ansible_env.USER | default('root') }}"
       force: true
   - meta:
       name: archive
@@ -70,8 +60,7 @@ tasks:
        - "{{:: freckle_path ::}}/backups/mysql/mysql_dump_latest.sql"
        - "{{:: freckle_path ::}}/backups/mysql/.freckle"
       dest: "{{:: freckle_path ::}}/backups/site/wordpress_site_backup_{{ timestamp }}.tar.bz2"
-      owner: "{{ backup_user }}"
-      group: "{{ backup_group }}"
+      owner: "{{ ansible_env.USER | default('root') }}"
       format: bz2
   - meta:
       name: copy
@@ -80,5 +69,4 @@ tasks:
       src: "{{:: freckle_path ::}}/backups/site/wordpress_site_backup_{{ timestamp }}.tar.bz2"
       dest: "{{:: freckle_path ::}}/backups/site/wordpress_site_backup_latest.tar.bz2"
       force: true
-      owner: "{{ backup_user }}"
-      group: "{{ backup_group }}"
+      owner: "{{ ansible_env.USER | default('root') }}"

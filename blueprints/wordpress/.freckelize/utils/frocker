@@ -13,10 +13,12 @@ PROGNAME="frocker"
 
 DOCKER_ID="local"
 FRECKLES_VERSION="git"
-#NO_CACHE="--no-cache"
+NO_CACHE="--no-cache"
 DOCKER_DEFAULTS_FILE=".freckelize/docker/defaults.yml"
 FROCKER_ALIASES_FILE=".freckelize/docker/aliases.frocker"
 FROCKER_CONTAINER_DEFAULTS_FILE=".freckelize/docker/container_defaults.frocker"
+FROCKER_PROJECT_BUILD_HELP=".freckelize/docker/build.help.frocker"
+FROCKER_PROJECT_RUN_HELP=".freckelize/docker/run.help.frocker"
 VAGRANT_DEFAULTS_FILE=".freckelize/vagrant/defaults.yml"
 
 # =============================================================
@@ -58,6 +60,15 @@ function display_command_build_help {
     echo "Usage:"
     echo "    frocker build -h                               display this help message."
     echo "    frocker build [-i IMAGE_NAME] [-r CONTEXT_REPO]      build a docker container for the current folder, optionally using the provided name"
+
+    if [[ -f "${THIS_DIR}/${FROCKER_PROJECT_BUILD_HELP}" ]]; then
+        echo ""
+        echo "Project specific help:"
+        echo "----------------------"
+        echo ""
+        cat "${THIS_DIR}/${FROCKER_PROJECT_BUILD_HELP}"
+        echo ""
+    fi
 }
 
 function build {
@@ -76,6 +87,10 @@ function build {
     echo ""
 
     docker build ${NO_CACHE} -t "${DOCKER_ID}:${1}" -f Dockerfile --build-arg FRECKLES_VERSION="${FRECKLES_VERSION}" --build-arg FRECKLE_CONTEXT_REPOS="${repos}" --build-arg FRECKLE_EXTRA_VARS="${vars}" .  || error_exit 'docker built process failed'
+
+    if [[ -f "${THIS_DIR}/${FROCKER_PROJECT_BUILD_HELP}" ]]; then
+        cat "${THIS_DIR}/${FROCKER_PROJECT_BUILD_HELP}"
+    fi
 }
 
 function command_build {
@@ -133,9 +148,18 @@ function command_build {
         else
             echo "No extra vars provided, using values from existing '${DOCKER_DEFAULTS_FILE}"
         fi
-        vars="-v ${DOCKER_DEFAULTS_FILE}"
+        vars="-v /freckle/${DOCKER_DEFAULTS_FILE}"
 
     fi
+
+    if [[ -z $repos ]]; then
+        repos="$(config_read "${THIS_DIR}/${FROCKER_CONTAINER_DEFAULTS_FILE}" "REPOS")"
+        if [[ ! -z $repos ]]; then
+            echo "* No repos specified, using default value (${repos}) from defaults file '${FROCKER_CONTAINER_DEFAULTS_FILE}'."
+            echo ""
+        fi
+    fi
+
 
     build "${name}" "${repos}" "${vars}"
 
@@ -194,10 +218,11 @@ function run {
 
 function display_command_run_help {
 
+    # TODO: use getopt instead of getopts to enable long options
     echo ""
     echo "Usage:"
-    echo "    frocker run -h                                            display this help message."
-    echo "    frocker run [-r] [-x] [-n NAME] [-i IMAGE_NAME] [-p PORT_MAPPING]   run the docker container for this folder, build if it doesn't exist yet"
+    echo "    frocker run -h                                                        display this help message."
+    echo "    frocker run [-y] [-r] [-x] [-n NAME] [-i IMAGE_NAME] [-p PORT_MAPPING]     run the docker container for this folder, build if it doesn't exist yet"
 
 }
 
@@ -205,7 +230,7 @@ function command_run {
 
     local ports=""
 
-    while getopts ":hxrn:i:p:" opt; do
+    while getopts ":hxyrn:i:p:" opt; do
         case ${opt} in
             h )
                 display_command_run_help
@@ -225,6 +250,9 @@ function command_run {
                 ;;
             x )
                 delete_existing=true
+                ;;
+            y )
+                no_mounts=true
                 ;;
             \? )
                 echo "Invalid Option: -$OPTARG" 1>&2
@@ -250,12 +278,16 @@ function command_run {
     if [[ -z $ports ]]; then
         ports="$(config_read "${THIS_DIR}/${FROCKER_CONTAINER_DEFAULTS_FILE}" "PORTS")"
         if [[ ! -z $ports ]]; then
-            echo "* No ports specified, using default (${ports}) from defaults file '${FROCKER_CONTAINER_DEFAULTS_FILE}'."
+            echo "* No ports specified, using default value (${ports}) from defaults file '${FROCKER_CONTAINER_DEFAULTS_FILE}'."
             echo ""
         fi
     fi
 
-    mounts="--mount type=bind,source=${THIS_DIR},target=/freckle"
+    if [ "${no_mounts}" = true ]; then
+        mounts=""
+    else
+        mounts="--mount type=bind,source=${THIS_DIR},target=/freckle"
+    fi
 
     run "${name}" "${image_name}" "${ports}" "${mounts}" "${rm}" "${delete_existing}"
 

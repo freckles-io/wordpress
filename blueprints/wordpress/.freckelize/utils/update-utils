@@ -1,0 +1,24 @@
+#! /usr/bin/env frecklecute
+
+doc:
+  help: update dev and freckles-related helper utilities
+
+args:
+  utils_path:
+    arg_name: utils_path
+    required: false
+    nargs: 1
+    is_argument: true
+    is_var: false
+
+tasks:
+
+  - get_url:
+      url: https://raw.githubusercontent.com/freckles-io/wordpress/master/frecklecutables/wordpress-backup
+      dest: "{{:: utils_path | default(frecklecutable.dir, true) ::}}/wordpress-backup"
+      force: true
+  - get_url:
+      url: https://raw.githubusercontent.com/makkus/frocker/master/frocker
+      dest: "{{:: utils_path | default(frecklecutable.dir, true) ::}}/frocker"
+      force: true
+
