@@ -27,7 +27,6 @@ defaults:
       url: "https://raw.githubusercontent.com/freckles-io/wordpress/master/blueprints/wordpress/%7B%7Bcookiecutter.freckle_folder_name%7D%7D/.freckelize/utils/wordpress-db-dump"
     - name: wordpress-db-import
       url: "https://raw.githubusercontent.com/freckles-io/wordpress/master/blueprints/wordpress/%7B%7Bcookiecutter.freckle_folder_name%7D%7D/.freckelize/utils/wordpress-db-import"
-  force: true
 
 tasks: |
   {%:: for item in utils ::%}
@@ -36,5 +35,7 @@ tasks: |
       task-type: ansible_task
     vars:
       url: "{{:: item.url ::}}"
-      dest: "{{:: utils_path | default(frecklecutable.dir, true) ::}}/{{:: item.name ::}}"
+      dest: "{{ '{{:: utils_path | default(frecklecutable.dir, true) ::}}/{{:: item.name ::}}' }}"
+      force: true
+      mode: 0775
   {%:: endfor ::%}
