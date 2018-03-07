@@ -20,6 +20,9 @@ wordpress_table_prefix: wp_
 wp_lang: en_US
 wp_debug: false
 
+wordpress_basic_auth: false
+wordpress_basic_auth_users: {}
+
 wordpress_docker: false
 wordpress_docker_user: wordpress
 

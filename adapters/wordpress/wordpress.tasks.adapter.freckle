@@ -8,6 +8,8 @@
     wordpress_webserver_user: "{{ freckle_folder_vars.owner }}"
     wordpress_webserver_group: "{{ freckle_folder_vars.group | default(omit) }}"
     wordpress_config_file_path: "{{ freckle_path }}/wp-config.php"
+    wordpress_basic_auth: "{{ freckle_folder_vars.wordpress_basic_auth | default(false) }}"
+    wordpress_basic_auth_users: "{{ freckle_folder_vars.wordpress_basic_auth_users | default({}) }}"
 
 - name: "[setting site-name related vars]"
   set_fact:

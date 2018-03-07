@@ -7,6 +7,39 @@
   with_items:
     - curl
 
+- name: "installing python-passlib"
+  install:
+    packages:
+      - python-passlib
+  when: wordpress_basic_auth
+
+- name: "[basic auth]"
+  set_fact:
+    site_basic_auth: ""
+  when: not wordpress_basic_auth
+
+- name: "[setting basic auth users]"
+  htpasswd:
+    path: /etc/htpasswd
+    name: "{{ item.key }}"
+    password: "{{ item.value }}"
+    owner: "{{ wordpress_webserver_user }}"
+    group: "{{ wordpress_webserver_group | default(root) }}"
+    mode: 0640
+  with_dict: "{{ wordpress_basic_auth_users }}"
+  when: wordpress_basic_auth
+
+- name: "[setting up basic auth if necessary]"
+  set_fact:
+    site_basic_auth: |
+          <Directory "{{ wordpress_wordpress_root }}">
+            Require valid-user
+            AuthType Basic
+            AuthName "Please authenticate, you schmock"
+            AuthUserFile /etc/htpasswd
+          </Directory>
+  when: wordpress_basic_auth
+
 - name: "[setting https related vars]"
   set_fact:
     apache_vhosts:
@@ -22,6 +55,10 @@
         certificate_file: "/etc/letsencrypt/live/{{ wordpress_domain }}/cert.pem"
         certificate_key_file: "/etc/letsencrypt/live/{{ wordpress_domain }}/privkey.pem"
         certificate_chain_file: "/etc/letsencrypt/live/{{ wordpress_domain }}/fullchain.pem"
+        extra_parameters: |
+          # basic auth_if necessary
+          {{ site_basic_auth }}
+
     apache_listen_port_ssl: 443
     apache_mods_enabled:
       - rewrite.load
