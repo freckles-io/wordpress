@@ -4,8 +4,8 @@ doc:
   help: backup mysql table
 
 args:
-  backup_path:
-    arg_name: backup_path
+  backup_dir:
+    arg_name: backup_dir
     required: true
     nargs: 1
     is_argument: true
@@ -57,7 +57,7 @@ tasks:
       name: set_fact
       task-desc: "[setting dump file path]"
     vars:
-      dump_file_base: "{{:: backup_path ::}}/{{:: name ::}}_dump_{{:: tag ::}}"
+      dump_file_base: "{{:: backup_dir ::}}/{{:: name ::}}_dump_{{:: tag ::}}"
   - meta:
       name: mysql_db
       task-desc: "creating mysql db dump"
@@ -81,7 +81,7 @@ tasks:
       become: true
     vars:
       src: "{{ dump_file_base }}_{{ timestamp }}.sql"
-      dest: "{{:: backup_path ::}}/{{:: name ::}}_dump_latest.sql"
+      dest: "{{:: backup_dir ::}}/{{:: name ::}}_dump_latest.sql"
       owner: "{{ backup_user }}"
       group: "{{ backup_group }}"
       mode: "0660"
