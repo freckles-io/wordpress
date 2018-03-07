@@ -64,7 +64,7 @@ tasks:
       become: true
     vars:
       state: dump
-      name: "{{:: db ::}}
+      name: "{{:: db ::}}"
       target: "{{ dump_file_base }}_{{ timestamp }}.sql"
   - meta:
       name: file
