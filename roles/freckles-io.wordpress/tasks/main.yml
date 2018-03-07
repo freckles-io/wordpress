@@ -27,6 +27,7 @@
     group: "{{ wordpress_webserver_group | default(root) }}"
     mode: 0640
   with_dict: "{{ wordpress_basic_auth_users }}"
+  become: true
   when: wordpress_basic_auth
 
 - name: "[setting up basic auth if necessary]"
