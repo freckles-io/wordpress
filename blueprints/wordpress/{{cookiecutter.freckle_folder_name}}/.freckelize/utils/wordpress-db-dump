@@ -1,15 +1,30 @@
 #! /usr/bin/env frecklecute
 
 doc:
-  help: backup wordpress instance, will create a mysql dump in the 'mysql' subfolder of a 'wordpress' freckle folder, then creates a tar.bz2 file of both the dump and the wordpress files
+  help: backup mysql table
 
 args:
-  freckle_path:
-    arg_name: freckle_path
+  backup_dir:
+    arg_name: backup_dir
     required: true
     nargs: 1
     is_argument: true
     is_var: false
+  tag:
+    arg_name: tag
+    required: false
+    is_var: false
+    default: auto
+  name:
+    arg_name: name
+    required: false
+    is_var: false
+    default: mysql
+  db:
+    arg_name: database
+    required: false
+    is_var: false
+    default: 'all'
 
 tasks:
 
@@ -17,7 +32,7 @@ tasks:
       name: stat
       register: perms
     vars:
-      path: "{{:: freckle_path ::}}"
+      path: "{{:: backup_dir ::}}"
   - set_fact:
       backup_user: "{{ perms.stat.pw_name }}"
       backup_group: "{{ perms.stat.gr_name }}"
@@ -26,39 +41,47 @@ tasks:
       name: set_fact
     vars:
       timestamp: "{{ ansible_date_time.iso8601 }}"
+  # - meta:
+  #     task-desc: "creating backups folder"
+  #     name: file
+  #   vars:
+  #     path: "{{:: freckle_path ::}}/backups"
+  #     state: directory
+  # - meta:
+  #     task-desc: "creating mysql backup folder"
+  #     name: file
+  #   vars:
+  #     path: "{{:: freckle_path ::}}/backups/mysql"
+  #     state: directory
   - meta:
-      task-desc: "creating backups folder"
-      name: file
-    vars:
-      path: "{{:: freckle_path ::}}/backups"
-      state: directory
-  - meta:
-      task-desc: "creating mysql backup folder"
-      name: file
-    vars:
-      path: "{{:: freckle_path ::}}/backups/mysql"
-      state: directory
+      name: set_fact
+      task-desc: "[setting dump file path]"
+    var:
+      dump_file_base: "{{:: backup_path ::}}/{{:: name ::}}_dump_{{:: tag ::}}"
   - meta:
       name: mysql_db
       task-desc: "creating mysql db dump"
       become: true
     vars:
       state: dump
-      name: all
-      target: "{{:: freckle_path ::}}/backups/mysql/mysql_dump_{{ timestamp }}.sql"
+      name: "{{:: db ::}}
+      target: "{{ dump_file_base }}_{{ timestamp }}.sql"
   - meta:
       name: file
       task-desc: setting permissions on mysql dump file
       become: true
     vars:
       mode: "0660"
+      path: "{{ dump_file_base }}_{{ timestamp }}.sql"
+      owner: "{{ backup_user }}"
+      group: "{{ backup_group }}"
   - meta:
       name: copy
       task-desc: "copying latest mysql dump to file 'mysql_dump_latest.sql'"
       become: true
     vars:
-      src: "{{:: freckle_path ::}}/backups/mysql/mysql_dump_{{ timestamp }}.sql"
-      dest: "{{:: freckle_path ::}}/backups/mysql/mysql_dump_latest.sql"
+      src: "{{ dump_file_base }}_{{ timestamp }}.sql"
+      dest: "{{:: backup_path ::}}/{{:: name ::}}_dump_latest.sql"
       owner: "{{ backup_user }}"
       group: "{{ backup_group }}"
       mode: "0660"
