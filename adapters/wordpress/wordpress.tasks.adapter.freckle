@@ -1,5 +1,6 @@
 - name: "[setting defaults]"
   set_fact:
+    wordpress_site_name: "{{ freckle_folder_vars.wordpress_site_name | default('wordpress') }}"
     wordpress_owner: "{{ freckle_folder_vars.owner }}"
     wordpress_group: "{{ freckle_folder_vars.group | default(omit) }}"
     wordpress_domain: "{{ freckle_folder_vars.wordpress_domain | default('localhost') }}"
@@ -8,13 +9,24 @@
     wordpress_webserver_group: "{{ freckle_folder_vars.group | default(omit) }}"
     wordpress_config_file_path: "{{ freckle_path }}/wp-config.php"
 
+- name: "[setting site-name related vars]"
+  set_fact:
+    wp_table_prefix: "{{ freckle_folder_vars.wordpress_db_table_prefix | default('wp'+wordpress_site_name+'_') }}"
+  when: "wordpress_site_name != 'wordpress'"
+
+- name: "[setting default site-name vars]"
+  set_fact:
+    wp_table_prefix: "{{ freckle_folder_vars.wordpress_db_table_prefix | default('wp_')) }}"
+  when: "wordpress_site_name == 'wordpress'"
+
+
 - name: "[setting db vars]"
   set_fact:
     wp_db_name: "{{ freckle_folder_vars.wordpress_db_name | default('wp_database') }}"
     wp_db_host: "{{ freckle_folder_vars.wordpress_db_host | default('localhost') }}"
     wp_db_user: "{{ freckle_folder_vars.wordpress_db_user | default('wp_user') }}"
     wp_db_password: "{{ freckle_folder_vars.wordpress_db_user_password | default('wp_user_password') }}"
-    wp_table_prefix: "{{ freckle_folder_vars.wordpress_db_table_prefix | default('wp_') }}"
+    #wp_table_prefix: "{{ freckle_folder_vars.wordpress_db_table_prefix | default('wp_') }}"
     wp_lang: "{{ freckle_folder_vars.wordpress_language | default('en_US') }}"
     wp_debug: "{{ freckle_folder_vars.wordpress_debug | default(false) }}"
     wordpress_docker: "{{ freckles_global_vars.freckle_docker | default(false) }}"
