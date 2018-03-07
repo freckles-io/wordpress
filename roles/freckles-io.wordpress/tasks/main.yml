@@ -74,6 +74,10 @@
         documentroot: "{{ wordpress_wordpress_root }}"
         options: "+FollowSymLinks"
         allow_override: All
+        extra_parameters: |
+          # basic auth_if necessary
+          {{ site_basic_auth }}
+
     apache_mods_enabled:
       - rewrite.load
       - php7.0.load
