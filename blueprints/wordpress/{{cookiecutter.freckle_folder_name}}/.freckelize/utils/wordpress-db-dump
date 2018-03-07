@@ -56,7 +56,7 @@ tasks:
   - meta:
       name: set_fact
       task-desc: "[setting dump file path]"
-    var:
+    vars:
       dump_file_base: "{{:: backup_path ::}}/{{:: name ::}}_dump_{{:: tag ::}}"
   - meta:
       name: mysql_db
