@@ -1,0 +1,16 @@
+- vagrant-dev:
+    freckle_profile_active: false
+    vagrant_dev_plugins:
+       - vagrant-triggers
+
+- docker-dev:
+    freckle_profile_active: false
+    docker_ports:
+       - "8280:8280"
+    docker_volumes:
+       "wordpress":
+         target: /freckle/wordpress
+       "mysql_backup":
+         target: /freckle/mysql_backup
+       "mysql_current":
+         target: /var/lib/mysql
