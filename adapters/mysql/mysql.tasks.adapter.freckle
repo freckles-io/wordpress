@@ -10,14 +10,14 @@
     mysql_group_id: "{{ freckle_vars.mysql_gid | default(omit) }}"
     mysql_dump_files: "{{ freckle_vars.mysql_dumps_to_import }}
 
-- name: "creating mysql group with gid: '{{ mysql_group_id }}'"
+- name: "creating mysql group with custom group id"
   group:
     name: mysql
     gid: "{{ mysql_group_id }}"
     state: present
   when: "mysql_group_id is defined"
 
-- name: "creating mysql user with uid: '{{ mysql_user_id }}'"
+- name: "creating mysql user with custom user id"
   group:
     name: mysql
     uid: "{{ mysql_user_id }}"
