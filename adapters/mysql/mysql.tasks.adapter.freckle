@@ -8,7 +8,7 @@
     mysql_datadir: /var/lib/mysql
     mysql_user_id: "{{ freckle_vars.mysql_uid | default(omit) }}"
     mysql_group_id: "{{ freckle_vars.mysql_gid | default(omit) }}"
-    mysql_dump_files: "{{ freckle_vars.mysql_dumps_to_import }}
+    mysql_dump_files: "{{ freckle_vars.mysql_dumps_to_import }}"
 
 - name: "creating mysql group with custom group id"
   group:
