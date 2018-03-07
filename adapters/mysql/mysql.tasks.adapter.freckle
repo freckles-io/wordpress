@@ -35,6 +35,6 @@
     name: item.0.db
     target: "{{ freckle_path }}/{{ item.1 }}"
   with_subelements:
-    - mysql_dump_files
+    - "{{ mysql_dump_files }}"
     - dumps
   become: yes
