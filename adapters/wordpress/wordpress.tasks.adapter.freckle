@@ -16,7 +16,7 @@
 
 - name: "[setting default site-name vars]"
   set_fact:
-    wp_table_prefix: "{{ freckle_folder_vars.wordpress_db_table_prefix | default('wp_')) }}"
+    wp_table_prefix: "{{ freckle_folder_vars.wordpress_db_table_prefix | default('wp_') }}"
   when: "wordpress_site_name == 'wordpress'"
 
 
