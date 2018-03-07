@@ -4,8 +4,8 @@ doc:
   help: backup mysql table
 
 args:
-  backup_dir:
-    arg_name: backup_dir
+  backup_path:
+    arg_name: backup_path
     required: true
     nargs: 1
     is_argument: true
