@@ -4,19 +4,43 @@ doc:
   help: backup  wordpress content folder
 
 args:
-  freckle_path:
-    arg_name: freckle_path
+  wordpress_path:
+    arg_name: wordpress_path
     required: true
     nargs: 1
     is_argument: true
     is_var: false
+  backup_dir:
+    arg_name: backup-dir
+    required: true
+    is_var: false
+  tag:
+    arg_name: tag
+    required: false
+    is_var: false
+    default: auto
 
 tasks:
   - meta:
       name: stat
       register: perms
     vars:
-      path: "{{:: freckle_path ::}}"
+      path: "{{:: backup_dir ::}}"
+  - meta:
+      name: fail
+      when: not perms.stat.exists
+    vars:
+      msg: "'{{:: backup_dir ::}}' does not exist"
+  - meta:
+      name: stat
+      register: wp_content_dir
+    vars:
+      path: "{{:: wordpress_path ::}}/wp-content"
+  - meta:
+      name: fail
+      when: not wp_content_dir.stat.exists
+    vars:
+      msg: "'{{:: wordpress_path ::}}/wp-content' does not exist, this does not seem to be a wordpress directory"
   - set_fact:
       backup_user: "{{ perms.stat.pw_name }}"
       backup_group: "{{ perms.stat.gr_name }}"
@@ -26,27 +50,20 @@ tasks:
     vars:
       timestamp: "{{ ansible_date_time.iso8601 }}"
   - meta:
-      task-desc: "creating backups folder"
-      name: file
+      name: set_fact
+      task-desc: "[setting archive file path]"
     vars:
-      path: "{{:: freckle_path ::}}/backups"
-      state: directory
-  - meta:
-      task-desc: "creating content backup folder"
-      name: file
-    vars:
-      path: "{{:: freckle_path ::}}/backups/content"
-      state: directory
+      archive_file_base: "{{:: backup_dir ::}}/wordpress_content_backup_{{:: tag ::}}"
   - meta:
       name: archive
-      task-desc: "creating backup of content folder"
+      task-desc: "creating backup of wordpress folder"
       become: true
     vars:
       path:
-       - "{{:: freckle_path ::}}/wordpress/.freckle"
-       - "{{:: freckle_path ::}}/wordpress/wp-config.php"
-       - "{{:: freckle_path ::}}/wordpress/wp-content"
-      dest: "{{:: freckle_path ::}}/backups/content/wordpress_content_backup_{{ timestamp }}.tar.bz2"
+       - "{{:: wordpress_path ::}}/.freckle"
+       - "{{:: wordpress_path ::}}/wp-config.php"
+       - "{{:: wordpress_path ::}}/wp-content"
+      dest: "{{ archive_file_base }}_{{ timestamp }}.tar.bz2"
       owner: "{{ backup_user }}"
       group: "{{ backup_group }}"
       mode: "0660"
@@ -56,8 +73,8 @@ tasks:
       task-desc: "copying latest content backup to file wordpress_content_backup_latest.tar.bz2"
       become: true
     vars:
-      src: "{{:: freckle_path ::}}/backups/content/wordpress_content_backup_{{ timestamp }}.tar.bz2"
-      dest: "{{:: freckle_path ::}}/backups/content/wordpress_content_backup_latest.tar.bz2"
+      src: "{{ archive_file_base }}_{{ timestamp }}.tar.bz2"
+      dest: "{{:: backup_dir ::}}/wordpress_content_backup_latest.tar.bz2"
       force: true
       mode: "0660"
       owner: "{{ backup_user }}"

@@ -10,6 +10,16 @@ args:
     nargs: 1
     is_argument: true
     is_var: false
+  db:
+    arg_name: database
+    required: false
+    is_var: false
+    default: 'all'
+  tag:
+    arg_name: tag
+    required: false
+    is_var: false
+    default: auto
 
 tasks:
   - meta:
@@ -29,77 +39,45 @@ tasks:
       task-desc: "creating backups folder"
       name: file
     vars:
-      path: "{{:: freckle_path ::}}/backups"
+      path: "{{:: freckle_path ::}}/archive"
       state: directory
   - meta:
       task-desc: "creating mysql backup folder"
       name: file
     vars:
-      path: "{{:: freckle_path ::}}/backups/mysql"
+      path: "{{:: freckle_path ::}}/mysql"
       state: directory
   - meta:
-      task-desc: "creating content backup folder"
-      name: file
+      name: set_fact
+      task-desc: "[setting dump file path]"
     vars:
-      path: "{{:: freckle_path ::}}/backups/content"
-      state: directory
-  - meta:
-      task-desc: "creating site backup folder"
-      name: file
-    vars:
-      path: "{{:: freckle_path ::}}/backups/site"
-      state: directory
+      mysql_dump_file_base: "{{:: freckle_path ::}}/mysql/wordpress_dump_{{:: tag ::}}"
   - meta:
       name: mysql_db
       task-desc: "creating mysql db dump"
       become: true
     vars:
       state: dump
-      name: all
-      target: "{{:: freckle_path ::}}/backups/mysql/mysql_dump_{{ timestamp }}.sql"
+      name: "{{:: db ::}}"
+      target: "{{ mysql_dump_file_base }}_{{ timestamp }}.sql"
   - meta:
       name: file
       task-desc: setting permissions on mysql dump file
       become: true
     vars:
       mode: "0660"
-      path: "{{:: freckle_path ::}}/backups/mysql/mysql_dump_{{ timestamp }}.sql"
+      path: "{{ mysql_dump_file_base }}_{{ timestamp }}.sql"
   - meta:
       name: copy
-      task-desc: "copying latest mysql dump to file 'mysql_dump_latest.sql'"
+      task-desc: "copying latest mysql dump to file 'wordpress_dump_latest.sql'"
       become: true
     vars:
-      mode: "0660"
-      src: "{{:: freckle_path ::}}/backups/mysql/mysql_dump_{{ timestamp }}.sql"
-      dest: "{{:: freckle_path ::}}/backups/mysql/mysql_dump_latest.sql"
+      src: "{{ mysql_dump_file_base }}_{{ timestamp }}.sql"
+      dest: "{{:: freckle_path ::}}/mysql/wordpress_dump_latest.sql"
       owner: "{{ backup_user }}"
       group: "{{ backup_group }}"
+      mode: "0660"
       force: true
-  - meta:
-      name: archive
-      task-desc: "creating backup of content folder"
-      become: true
-    vars:
-      path:
-       - "{{:: freckle_path ::}}/wordpress/.freckle"
-       - "{{:: freckle_path ::}}/wordpress/wp-config.php"
-       - "{{:: freckle_path ::}}/wordpress/wp-content"
-      dest: "{{:: freckle_path ::}}/backups/content/wordpress_content_backup_{{ timestamp }}.tar.bz2"
-      owner: "{{ backup_user }}"
-      group: "{{ backup_group }}"
-      mode: "0660"
-      format: bz2
-  - meta:
-      name: copy
-      task-desc: "copying latest content backup to file wordpress_content_backup_latest.tar.bz2"
-      become: true
-    vars:
-      src: "{{:: freckle_path ::}}/backups/content/wordpress_content_backup_{{ timestamp }}.tar.bz2"
-      dest: "{{:: freckle_path ::}}/backups/content/wordpress_content_backup_latest.tar.bz2"
-      force: true
-      mode: "0660"
-      owner: "{{ backup_user }}"
-      group: "{{ backup_group }}"
   - meta:
       name: archive
       task-desc: "creating site backup"
@@ -107,9 +85,9 @@ tasks:
     vars:
       path:
        - "{{:: freckle_path ::}}/wordpress"
-       - "{{:: freckle_path ::}}/backups/mysql/mysql_dump_latest.sql"
-       - "{{:: freckle_path ::}}/backups/mysql/.freckle"
-      dest: "{{:: freckle_path ::}}/backups/site/wordpress_site_backup_{{ timestamp }}.tar.bz2"
+       - "{{:: freckle_path ::}}/mysql/mysql_dump_latest.sql"
+       - "{{:: freckle_path ::}}/mysql/.freckle"
+      dest: "{{:: freckle_path ::}}/archive/wordpress_site_backup_{{:: tag ::}}_{{ timestamp }}.tar.bz2"
       owner: "{{ backup_user }}"
       group: "{{ backup_group }}"
       mode: "0660"
@@ -119,8 +97,8 @@ tasks:
       task-desc: "copying latest site backup to file wordpress_site_backup_latest.tar.bz2"
       become: true
     vars:
-      src: "{{:: freckle_path ::}}/backups/site/wordpress_site_backup_{{ timestamp }}.tar.bz2"
-      dest: "{{:: freckle_path ::}}/backups/site/wordpress_site_backup_latest.tar.bz2"
+      src: "{{:: freckle_path ::}}/archive/wordpress_site_backup_{{:: tag ::}}_{{ timestamp }}.tar.bz2"
+      dest: "{{:: freckle_path ::}}/archive/wordpress_site_backup_latest.tar.bz2"
       force: true
       mode: "0660"
       owner: "{{ backup_user }}"

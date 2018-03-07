@@ -10,6 +10,11 @@ args:
     nargs: 1
     is_argument: true
     is_var: false
+  db:
+    arg_name: database
+    required: false
+    is_var: false
+    default: 'all'
 
 tasks:
   - meta:
@@ -28,5 +33,5 @@ tasks:
       become: true
     vars:
       state: import
-      name: all
+      name: "{{:: db ::}}"
       target: "{{:: db_dump_path ::}}"
