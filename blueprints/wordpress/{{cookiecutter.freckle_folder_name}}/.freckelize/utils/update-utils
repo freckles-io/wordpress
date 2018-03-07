@@ -38,6 +38,6 @@ tasks: |
       url: "{{:: item.url ::}}"
       dest: "{{ '{{:: utils_path | default(frecklecutable.dir, true) ::}}/{{:: item.name ::}}' }}"
       force: true
-      headers: "Cache-Control:no-cache,Cache-Control:no-store,Cache-Control:must-revalidate,Expires:0"
+      headers: "Cache-Control:no-cache,Cache-Control:no-store,Cache-Control:must-revalidate,Cache-Control:max-age=0,Expires:0"
       mode: "0775"
   {%:: endfor ::%}
