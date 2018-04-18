@@ -1,18 +1,92 @@
----
-role-dependencies:
-  - geerlingguy.mysql
 doc:
-  help: "adapter to install a mysql database using this role: https://github.com/geerlingguy/ansible-role-mysql"
-  short_help: install mysql db
-# args:
-#   test_arg:
-#     arg_name: test-arg
-#     help: example help text for arg
-#     type: str  # (optional)
-#     multiple: false  # (optional)
-#     required: false  # (optional)
-#     default: default-string  # (optional)
-#     metavar: TEST_ARG  # (optional)
-#     is_flag: false  # (optional)
-#     is_var: true  # (optional)
-#     is_argument: false  # (optional)
+  author: Markus Binsteiner
+  homepage: https://github.com/freckles-io/mysql
+  references:
+    - https://github.com/geerlingguy/ansible-role-mysql
+  short_help: installs and configures a mysql server
+  help: |
+     Adapter to install a mysql database using this role: https://github.com/geerlingguy/ansible-role-mysql
+
+__freckles__:
+  adapter_priority: 900
+  roles:
+    - geerlingguy.mysql
+
+args:
+  mysql_dump_files:
+    cli_enabled: false
+    type: list
+    doc:
+      help: an (optional) list of dump files to import, the f
+      references:
+        - http://docs.ansible.com/ansible/latest/modules/mysql_db_module.html
+      examples:
+        - |
+           - db: all
+             dumps:
+               - dump_latest.sql
+        - |
+           - db: wp_project_1
+             dumps:
+               - dump_1.sql
+               - dump_2.sql
+           - db: wp_project_2
+             dumps:
+               - dump_3.sql
+  mysql_root_password:
+    cli_enabled: false
+    doc:
+      help: the password for the mysql root account
+  mysql_root_password_update:
+    default: false
+    cli_enabled: false
+    doc:
+      help: whether to force update the MySQL root user's password
+      references:
+        - https://github.com/geerlingguy/ansible-role-mysql/#role-variables
+  mysql_databases:
+    cli_enabled: false
+    doc:
+      help: the MySQL databases to create
+      long_help: |
+        A database has the values name, encoding (defaults to utf8), collation (defaults to utf8_general_ci) and replicate (defaults to 1, only used if replication is configured). The formats of these are the same as in the mysql_db module.
+      examples:
+        - |
+             - name: example_db
+               encoding: latin1
+               collation: latin1_general_ci
+  mysql_users:
+    cli_enabled: false
+    doc:
+      help: the MySQL users and their privileges
+      long_help: |
+        A user has the values:
+          - name
+          - host (defaults to localhost)
+          - password
+          - encrypted (defaults to no)
+          - priv (defaults to *.*:USAGE)
+          - append_privs (defaults to no)
+          - state (defaults to present)
+      examples:
+        - |
+             mysql_users:
+              - name: example_user
+                host: "%"
+                password: similarly-secure-password
+                priv: "example_db.*:ALL"
+  mysql_user_id:
+    cli_enabled: false
+    doc:
+      help: the uid of the user to run the mysql server
+      notes:
+        - this is useful for docker, as the mysql user can be created beforehand with a specific uid
+  mysql_group_id:
+    cli_enabled: false
+    doc:
+      help: the gid of the group to run the mysql server
+      notes:
+        - this is useful for docker, as the mysql group can be created beforehand with a specific uid
+
+tasks_folder:
+  - tasks.mysql.yml

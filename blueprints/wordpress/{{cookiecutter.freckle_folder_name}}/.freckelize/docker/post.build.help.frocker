@@ -1,5 +1,0 @@
-Note: if you use the wordpress blueprint in combination with Docker/Frocker, the 'frocker build ...' step won't populate the 'wordpress/wp-config.php' file nor the 'wordpress/wp-content' directory, due to the way the underlying 'docker build ...' process works. 
-
-To manually initialize those after the build step (this has to be done only once per project), issue the following command manually:
-
-.freckelize/utils/init_wordpress_blueprint.sh

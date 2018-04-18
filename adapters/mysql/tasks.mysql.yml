@@ -1,14 +1,7 @@
 ---
 - name: "[setting vars]"
   set_fact:
-    mysql_root_password: "{{ freckle_folder_vars.mysql_root_password | default(omit) }}"
-    mysql_root_password_update: "{{ freckle_folder_vars.mysql_root_password_update | default(omit) }}"
-    mysql_databases: "{{ freckle_vars.mysql_databases | default(omit) }}"
-    mysql_users: "{{ freckle_vars.mysql_users | default(omit) }}"
     mysql_datadir: /var/lib/mysql
-    mysql_user_id: "{{ freckle_vars.mysql_uid | default(omit) }}"
-    mysql_group_id: "{{ freckle_vars.mysql_gid | default(omit) }}"
-    mysql_dump_files: "{{ freckle_vars.mysql_dumps_to_import | default({}) }}"
 
 - name: "creating mysql group with custom group id"
   group:
@@ -34,7 +27,7 @@
     state: import
     name: "{{ item.0.db }}"
     target: "{{ freckle_path }}/{{ item.1 }}"
-  when: mysql_dump_files
+  when: "mysql_dump_files is defined and mysql_dump_files"
   with_subelements:
     - "{{ mysql_dump_files }}"
     - dumps

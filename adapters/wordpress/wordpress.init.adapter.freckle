@@ -1,6 +1,0 @@
-# we could support multiple wordpress sites if we wanted to I guess
-
-- name: "[check whether there is more than one freckle folders]"
-  fail:
-    msg: "More than one freckle folder detected, this is not supported for this adapter"
-  when: freckles_profile_folders | length > 1

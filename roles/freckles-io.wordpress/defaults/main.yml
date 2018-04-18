@@ -1,6 +1,7 @@
 ---
 # defaults file for freckles-io.wordpress
 
+wordpress_site_name: wordpress
 wordpress_domain: localhost
 wordpress_port: 80
 wordpress_webserver_root: "/var/www"

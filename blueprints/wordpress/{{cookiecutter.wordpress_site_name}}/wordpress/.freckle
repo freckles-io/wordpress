@@ -6,6 +6,7 @@
 
 - wordpress:
    letsencrypt_email: {{ cookiecutter.letsencrypt_email }}  # if specified and not 'none', a https certificate will be downloaded, installed and configured
+   wordpress_site_name: {{ cookiecutter.wordpress_site_name }}
    wordpress_domain: '{{ cookiecutter.wordpress_domain }}'
    wordpress_port: 80
    wordpress_db_name: wp_database

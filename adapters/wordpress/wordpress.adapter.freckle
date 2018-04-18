@@ -1,45 +1,112 @@
 doc:
+  author: Markus Binsteiner
+  homepage: https://github.com/freckles-io/wordpress
   short_help: installs wordpress
   help: installs wordpress, including mysql/mariadb & a webserver (nginx)
 
-role-dependencies:
-  - geerlingguy.apache
-  - geerlingguy.php
-  - thefinn93.letsencrypt
-  - freckles-io.wordpress
-  - geerlingguy.supervisor
+__freckles__:
+  adapter_priority: 1000
+  roles:
+    - geerlingguy.apache
+    - geerlingguy.php
+    - thefinn93.letsencrypt
+    - freckles-io.wordpress
+    - geerlingguy.supervisor
 
-available_vars:
+args:
+  wordpress_site_name:
+    default: wordpress
+    cli_enabled: false
+    doc:
+      help: "the name of the site"
   wordpress_domain:
-    help: "the domain where this wordpress instance is hosted, defaults to 'localhost'"
+    default: localhost
+    cli_enabled: false
+    doc:
+      help: "the domain where this wordpress instance is hosted, defaults to 'localhost'"
+  wordpress_port:
+    default: 80
+    cli_enabled: false
+    doc:
+      help: the http port (does not affect https, which will always use port 443)
+
+  wordpress_letsencrypt_email:
+    cli_enabled: false
+    doc:
+      help: optional, if set then this adapter will request a https certificate and use https to serve wordpress
+  wordpress_letsencrypt_staging:
+    cli_enabled: false
+    default: false
+    doc:
+      help: whether to use the letsencrypt staging server, instead of production. good for development as there is no rate-limit
+
+  wordpress_basic_auth:
+    default: false
+    cli_enabled: false
+    doc:
+      help: whether to enable basic auth (might be useful to share development sites)
+  wordpress_basic_auth_users:
+    default: {}
+    cli_enabled: false
+    doc:
+      help: a dictionary with username/password as key/value
+      references:
+        - https://docs.ansible.com/ansible/latest/modules/htpasswd_module.html
+
+  # database
   wordpress_db_host:
-    help: "the wordpress database host, defaults to 'localhost', takes string in the format <host>[:<port>]"
-  letsencrypt_email:
-    help: optional, if set then this adapter will request a https certificate and use https to serve wordpress
+    default: localhost
+    cli_enabled: false
+    doc:
+      help: "the wordpress database host, defaults to 'localhost', takes string in the format <host>[:<port>]"
   wordpress_db_name:
-    help: "the wordpress database name, defaults to 'wp_database'"
+    default: wp_database
+    cli_enabled: false
+    doc:
+      help: "the wordpress database name, defaults to 'wp_database'"
   wordpress_db_user:
-    help: "the wordpress database username, defaults to 'wp_user'"
+    default: wp_user
+    cli_enabled: false
+    doc:
+      help: "the wordpress database username, defaults to 'wp_user'"
   wordpress_db_user_password:
-    help: "the wordpress database user password, defaults to 'wp_user_password'"
+    default: wp_user_password
+    cli_enabled: false
+    doc:
+      help: "the wordpress database user password, defaults to 'wp_user_password'"
   wordpress_db_table_prefix:
-    help: "the wordpress db table prefix, defaults to 'wp_'"
+    cli_enabled: false
+    doc:
+      help: the wordpress mysql table prefix, defaults to 'wp_' or 'wp_<wordpress_site_name>_' (if custom site name)
   wordpress_language:
-    help: "the wordpress language, defaults to 'en_US'"
+    default: en_US
+    cli_enabled: false
+    doc:
+      help: "the wordpress language, defaults to 'en_US'"
   wordpress_debug:
-    help: "whether to enable wordpress debug, default: 'false'"
+    debug: false
+    cli_enabled: false
+    doc:
+      help: "whether to enable wordpress debug, default: 'false'"
 
-priority: 1000
+  # dev
+  wordpress_docker:
+    alias: docker
+    default: false
+    cli_enabled: true
+    doc:
+      help: "whether to add docker-specific features (init-file, etc.)"
+    click:
+      option:
+        is_flag: true
+  wordpress_vagrant:
+    alias: vagrant
+    cli_enabled: true
+    doc:
+      help: "whether to add vagrant-specific features"
+    click:
+      option:
+        is_flag: true
 
-# args:
-#   test_arg:
-#     arg_name: test-arg
-#     help: example help text for arg
-#     type: str  # (optional)
-#     multiple: false  # (optional)
-#     required: false  # (optional)
-#     default: default-string  # (optional)
-#     metavar: TEST_ARG  # (optional)
-#     is_flag: false  # (optional)
-#     is_var: true  # (optional)
-#     is_argument: false  # (optional)
+tasks_folder:
+  - tasks.wordpress.yml
