@@ -9,6 +9,8 @@ doc:
 
 __freckles__:
   adapter_priority: 900
+  # task_lists:
+    # - mysql_folder_tasks: tasks.mysql.yml
   roles:
     - geerlingguy.mysql
 
@@ -88,5 +90,40 @@ args:
       notes:
         - this is useful for docker, as the mysql group can be created beforehand with a specific uid
 
-tasks_folder:
-  - tasks.mysql.yml
+tasks:
+
+  - name: "[setting vars]"
+    set_fact:
+      mysql_datadir: /var/lib/mysql
+
+  - name: "creating mysql group with custom group id"
+    group:
+      name: mysql
+      gid: "{{ mysql_group_id }}"
+      state: present
+    when: "mysql_group_id is defined"
+
+  - name: "creating mysql user with custom user id"
+    group:
+      name: mysql
+      uid: "{{ mysql_user_id }}"
+      state: present
+    when: "mysql_user_id is defined"
+
+  - name: "[install mysql]"
+    include_role:
+      name: geerlingguy.mysql
+    become: yes
+
+  - name: "importing mysql dumps"
+    mysql_db:
+      state: import
+      name: "{{ item.0.db }}"
+      target: "{{ freckle_path }}/{{ item.1 }}"
+    when: "mysql_dump_files is defined and mysql_dump_files"
+    with_subelements:
+      - "{{ mysql_dump_files }}"
+      - dumps
+    become: yes
+
+  #- include_tasks: "{{ mysql_folder_tasks }}"

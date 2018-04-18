@@ -6,6 +6,8 @@ doc:
 
 __freckles__:
   adapter_priority: 1000
+  # task_lists:
+    # - wordpress_folder_tasks: tasks.wordpress.yml
   roles:
     - geerlingguy.apache
     - geerlingguy.php
@@ -113,5 +115,25 @@ args:
       option:
         is_flag: true
 
-tasks_folder:
-  - tasks.wordpress.yml
+tasks:
+
+  - name: "[setting defaults]"
+    set_fact:
+      wordpress_owner: "{{ freckle_owner }}"
+      wordpress_group: "{{ freckle_group | default(omit) }}"
+      wordpress_webserver_user: "{{ freckle_owner }}"
+      wordpress_webserver_group: "{{ freckle_group | default(omit) }}"
+      wordpress_config_file_path: "{{ freckle_path }}/wp-config.php"
+
+  - name: "[setting docker uid/gid, just in case]"
+    set_fact:
+        wordpress_docker_user: "{{ wordpress_owner }}"
+        wordpress_docker_group: "{{ wordpress_group | default(omit) }}"
+        wordpress_docker_uid: "{{ freckle_path_info.uid }}"
+        wordpress_docker_gid: "{{ freckle_path_info.gid }}"
+
+  - name: "[starting wordpress role]"
+    include_role:
+      name: freckles-io.wordpress
+
+  # - include_tasks: "{{ wordpress_folder_tasks }}"
