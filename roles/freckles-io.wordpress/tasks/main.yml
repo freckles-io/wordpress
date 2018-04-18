@@ -198,3 +198,5 @@
 - name: including vagrant-specific tasks
   include_tasks: wordpress_vagrant.yml
   when: wordpress_vagrant
+
+# TODO: might be good to do a restart apache here, not sure how to notify a handler in an include_role
