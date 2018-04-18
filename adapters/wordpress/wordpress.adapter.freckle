@@ -25,6 +25,7 @@ args:
     doc:
       help: "the domain where this wordpress instance is hosted, defaults to 'localhost'"
   wordpress_port:
+    alias: "port"
     default: 80
     cli_enabled: true
     doc:
