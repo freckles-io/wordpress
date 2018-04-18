@@ -30,6 +30,10 @@ args:
     cli_enabled: true
     doc:
       help: the http port (does not affect https, which will always use port 443)
+    click:
+      option:
+        metavar: PORT
+        type: int
 
   wordpress_letsencrypt_email:
     cli_enabled: false
