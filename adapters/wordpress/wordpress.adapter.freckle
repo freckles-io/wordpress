@@ -26,7 +26,7 @@ args:
       help: "the domain where this wordpress instance is hosted, defaults to 'localhost'"
   wordpress_port:
     default: 80
-    cli_enabled: false
+    cli_enabled: true
     doc:
       help: the http port (does not affect https, which will always use port 443)
 
