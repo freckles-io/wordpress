@@ -136,4 +136,3 @@ tasks:
     include_role:
       name: freckles-io.wordpress
 
-  # - include_tasks: "{{ wordpress_folder_tasks }}"

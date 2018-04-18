@@ -1,0 +1,50 @@
+# this is a bit convoluted, as sometimes it looks like
+# api.wordpress.org returns a salt that the Ansible
+# templating system can't handle
+# so I construct the wp-config file by 'cat'-ing 3 pieces together
+
+- name: "[setting wordpress_config content 1]"
+  copy:
+    dest: "{{ wordpress_config_file_path }}__1"
+    content: |
+      <?php
+      define("DB_NAME", "{{ wp_db_name }}");
+      define("DB_USER", "{{ wp_db_user }}");
+      define("DB_PASSWORD", "{{ wp_db_password }}");
+      define("DB_HOST", "{{ wp_db_host }}");
+      define("DB_CHARSET", "utf8");
+      define("DB_COLLATE", "");
+  become: true
+
+- name: "[create salt file]"
+  copy:
+    dest: "{{ wordpress_config_file_path }}__2"
+    content: ""
+    mode: 0700
+    force: yes
+  become: true
+
+- name: "[generating wordpress config salt]"
+  shell: "curl http://api.wordpress.org/secret-key/1.1/salt/ > {{ wordpress_config_file_path }}__2"
+  become: true
+
+- name: "[setting wordpress_config content 3]"
+  copy:
+    dest: "{{ wordpress_config_file_path }}__3"
+    content: |
+      $table_prefix  = "{{ wp_table_prefix }}";
+      define("WPLANG", "{{ wp_lang }}");
+      define("WP_DEBUG", {{ wp_debug }});
+      define("CONCATENATE_SCRIPTS", false);
+      if (!defined("ABSPATH"))
+       define("ABSPATH", dirname(__FILE__) . "/");
+      require_once(ABSPATH . "wp-settings.php");
+  become: true
+
+- name: "generating initial wordpress config"
+  shell: "cat {{ wordpress_config_file_path }}__* > {{ wordpress_config_file_path }}"
+  become: true
+
+- name: "[removing wordpress config tokens]"
+  shell: "rm -f {{ wordpress_config_file_path }}__*"
+  become: true
